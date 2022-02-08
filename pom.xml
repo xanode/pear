@@ -13,4 +13,20 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <!-- Add Java Native Access in order to use libsodium-jna. -->
+        <dependency>
+            <groupId>com.sun.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+        <!-- Java library that binds to libsodium C crypto APIs with Java Native Access (JNA) -->
+        <dependency>
+            <groupId>com.muquit.libsodiumjna</groupId>
+            <artifactId>libsodium-jna</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
+    </dependencies>
+
 </project>
