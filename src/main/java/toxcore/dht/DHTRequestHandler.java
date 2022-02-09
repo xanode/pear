@@ -3,6 +3,7 @@ package toxcore.dht;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -43,10 +44,13 @@ public class DHTRequestHandler implements Runnable {
         return new DatagramPacket(data, data.length, receiverInetAddress, this.port);
     }
 
-    private Integer getDistance(byte[] nodePublicKey) {
-        // Return distance between two nodes by calculating Public_Key_1 XOR Public_Key_2 (public keys in big endian format)
-        // TODO: compute distances
-        return 0;
+    private BigInteger getDistance(byte[] nodePublicKey) {
+        /*
+         * Compute distance between this node and a foreign one.
+         * The distance function is defined as the XOR between the 2 DHT public keys,
+         * both are treated as unsigned 32 byte numbers in big endian format.
+         */
+        return (new BigInteger(1, this.publicKey)).xor(new BigInteger(1, nodePublicKey));
     }
 
     private ArrayList<byte[]> getClosestNodes(byte[] nodePublicKey) {
