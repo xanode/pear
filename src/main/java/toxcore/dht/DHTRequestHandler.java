@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,8 +30,12 @@ public class DHTRequestHandler implements Runnable {
         byte[] encryptedPayload = SodiumLibrary.cryptoBoxEasy(payload, nonce, receiverPublicKey, this.dht.getPrivateKey());
 
         // Collect data
-        byte[] data = new byte[type.length+this.dht.getPublicKey().length+nonce.length+encryptedPayload.length];
-        // TODO: build packet
+        byte[] data = ByteBuffer.allocate(type.length+this.dht.getPublicKey().length+nonce.length+encryptedPayload.length)
+                .put(type)
+                .put(receiverPublicKey)
+                .put(nonce)
+                .put(encryptedPayload)
+                .array();
 
         // Effective construction of datagram packet
         return new DatagramPacket(data, data.length, receiverInetAddress, this.dht.getPort());
