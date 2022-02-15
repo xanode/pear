@@ -11,19 +11,11 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DHTRequestHandler implements Runnable {
-    final private byte[] publicKey;
-    final private byte[] privateKey;
+    private DHT dht;
     private DatagramPacket packet;
-    private DatagramSocket socket;
-    private ConcurrentHashMap<byte[], InetAddress> nodes;
-    final private int port;
-    public DHTRequestHandler(DatagramSocket socket, DatagramPacket packet, int port, byte[] publicKey, byte[] privateKey, ConcurrentHashMap<byte[], InetAddress> nodes) {
-        this.publicKey = publicKey;
-        this.privateKey = privateKey;
-        this.socket = socket;
+    public DHTRequestHandler(DHT dht, DatagramPacket packet) {
+        this.dht = dht;
         this.packet = packet;
-        this.nodes = nodes;
-        this.port = port;
     }
 
     public void run() {
@@ -34,14 +26,14 @@ public class DHTRequestHandler implements Runnable {
         // Generate nonce
         byte[] nonce = SodiumLibrary.randomBytes(SodiumLibrary.cryptoBoxNonceBytes().intValue());
         // Encrypt payload
-        byte[] encryptedPayload = SodiumLibrary.cryptoBoxEasy(payload, nonce, receiverPublicKey, this.privateKey);
+        byte[] encryptedPayload = SodiumLibrary.cryptoBoxEasy(payload, nonce, receiverPublicKey, this.dht.getPrivateKey());
 
         // Collect data
-        byte[] data = new byte[type.length+this.publicKey.length+nonce.length+encryptedPayload.length];
+        byte[] data = new byte[type.length+this.dht.getPublicKey().length+nonce.length+encryptedPayload.length];
         // TODO: build packet
 
         // Effective construction of datagram packet
-        return new DatagramPacket(data, data.length, receiverInetAddress, this.port);
+        return new DatagramPacket(data, data.length, receiverInetAddress, this.dht.getPort());
     }
 
     private BigInteger getDistance(byte[] nodePublicKey) {
@@ -50,7 +42,7 @@ public class DHTRequestHandler implements Runnable {
          * The distance function is defined as the XOR between the 2 DHT public keys,
          * both are treated as unsigned 32 byte numbers in big endian format.
          */
-        return (new BigInteger(1, this.publicKey)).xor(new BigInteger(1, nodePublicKey));
+        return (new BigInteger(1, this.dht.getPublicKey())).xor(new BigInteger(1, nodePublicKey));
     }
 
     private ArrayList<byte[]> getClosestNodes(byte[] nodePublicKey) {

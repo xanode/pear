@@ -53,4 +53,16 @@ public class DHT implements Runnable {
     public void run() {
         // TODO: write function
     }
+
+    public byte[] getPublicKey() {
+        return this.publicKey;
+    }
+
+    public byte[] getPrivateKey() {
+        return this.privateKey;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
 }
