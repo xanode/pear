@@ -3,10 +3,12 @@ package toxcore.dht;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,6 +52,33 @@ public class DHTRequestHandler implements Runnable {
         ArrayList<byte[]> closestNodes = new ArrayList<>();
         // TODO: compute distances, sort and return them
         return closestNodes;
+    }
+
+    private void sendNodes (byte[] nodePublicKey, byte[] receiverPublicKey) throws IOException, SodiumLibraryException {
+        /*
+         * Send the 4 closest nodes to the target/"node" from your own private list
+         * Send it to the receiver
+         */
+        //Get the closest nodes
+        ArrayList<byte[]> closestNodes = getClosestNodes(nodePublicKey);
+        //Create the payload packet
+        ByteBuffer buffer = ByteBuffer.allocate(1+32*closestNodes.size());
+        //Number of nodes
+        buffer.put((byte) closestNodes.size());
+        //Adding publicKey of the closest nodes
+        for (byte[] nodeClose : closestNodes) {
+            for (byte i : nodeClose) {
+                buffer.put(i);
+            }
+        }
+        byte[] payload = buffer.array();
+        //build the packet with the payload
+        //type of the packet
+        byte[] typePacket = new byte[] {4};
+        DatagramPacket builtPacket = DHTPacketBuilder(typePacket, receiverPublicKey, payload, null);
+        //Send the builtPacket
+        DatagramSocket socket = new DatagramSocket();
+        socket.send(builtPacket);
     }
 
     private InetAddress lookupNode(byte[] nodePublicKey) {
