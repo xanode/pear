@@ -12,6 +12,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -84,6 +86,20 @@ public class DHT implements Runnable {
             this.socket.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void commandLine() {
+        Scanner scanner = new Scanner(System.in);
+        String command;
+        while(this.running) {
+            System.out.println("DHT >> ");
+            command = scanner.nextLine();
+            if (command.toLowerCase().equals("close")) {
+                this.closeDHT();
+            } else {
+                System.out.println("Invalid command.");
+            }
         }
     }
 
