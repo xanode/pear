@@ -5,6 +5,9 @@ import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
 
+import javax.xml.crypto.Data;
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -50,8 +53,38 @@ public class DHT implements Runnable {
         this.servicingThread = new ArrayList<>();
     }
 
+    @Override
     public void run() {
-        // TODO: write function
+        while (running) {
+            DatagramPacket packet = new DatagramPacket(this.buffer, this.buffer.length);
+            try {
+                this.socket.receive(packet);
+                Thread thread = new Thread(new DHTRequestHandler(this, packet));
+                this.servicingThread.add(thread);
+                thread.start();
+            } catch (SocketException e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void closeDHT() {
+        this.running = false;
+        try {
+            for (Thread thread: this.servicingThread) {
+                if (thread.isAlive()) {
+                    thread.join();
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public byte[] getPublicKey() {
