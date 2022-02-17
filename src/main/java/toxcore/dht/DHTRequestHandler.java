@@ -73,12 +73,13 @@ public class DHTRequestHandler implements Runnable {
         }
         byte[] payload = buffer.array();
         //build the packet with the payload
-        //type of the packet
+        //type of the packet : 4
         byte[] typePacket = new byte[] {4};
         DatagramPacket builtPacket = DHTPacketBuilder(typePacket, receiverPublicKey, payload, null);
         //Send the builtPacket
         DatagramSocket socket = new DatagramSocket();
         socket.send(builtPacket);
+        // TODO : need to replace null element (InetAddress) in DHT builder
     }
 
     private InetAddress lookupNode(byte[] nodePublicKey) {
