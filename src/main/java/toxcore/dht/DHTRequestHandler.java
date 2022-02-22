@@ -10,6 +10,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DHTRequestHandler implements Runnable {
@@ -48,9 +50,35 @@ public class DHTRequestHandler implements Runnable {
     }
 
     private ArrayList<byte[]> getClosestNodes(byte[] nodePublicKey) {
-        // Get closest nodes in our own private list
+        /*
+         * Get the closest nodes in our own private DHT
+         */
         ArrayList<byte[]> closestNodes = new ArrayList<>();
-        // TODO: compute distances, sort and return them
+        //Get the keys of the DHT
+        ConcurrentHashMap<byte[], InetAddress> nodes = this.dht.getDHT();
+        Set<byte[]> keys = nodes.keySet();
+        int numberOfNeighbor = 4;
+        //Create the list of all the distances
+        ArrayList<BigInteger> distances = new ArrayList<>();
+        for (byte[] publicKey : keys){
+            BigInteger distance = getDistance(publicKey);
+            distances.add(distance);
+        }
+        //do this the numberOfNeighbor time
+        for (int i=0; i<numberOfNeighbor; i++) {
+            //find the min
+            BigInteger min = Collections.min(distances);
+            //get the matching publicKey
+            for (byte[] publicKey : keys) {
+                BigInteger distance = getDistance(publicKey);
+                if (distance.equals(min)) {
+                    closestNodes.add(publicKey);
+                    distances.remove(min);
+                    break;
+                }
+            }
+        }
+        // TODO: I create getDHT methode in DHT.java to have access to publicKeys. Maybe optimize this methode using xor 2 time to get the matching publicKey
         return closestNodes;
     }
 

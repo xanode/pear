@@ -5,10 +5,13 @@ import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
 
+import java.math.BigInteger;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -50,9 +53,11 @@ public class DHT implements Runnable {
         this.servicingThread = new ArrayList<>();
     }
 
-    public void run() {
+        public void run() {
         // TODO: write function
     }
+
+    public ConcurrentHashMap<byte[], InetAddress> getDHT() { return this.nodes; }
 
     public byte[] getPublicKey() {
         return this.publicKey;
