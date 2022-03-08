@@ -119,11 +119,19 @@ public class DHT implements Runnable {
      * Indicates which of the keys is the closest to baseKey.
      * @param baseKey Base key for comparison
      * @param initialKey Initial key
-     * @param secondKey Key for comparison
+     * @param comparisonKey Key for comparison
      * @return True if the key to compare is closer to the base key than the initial key, false otherwise.
      */
-    public static boolean getClosest(byte[] baseKey, byte[] initialKey, byte[] secondKey) {
-        // TODO: The getClosest function!
+    public static boolean getClosest(byte[] baseKey, byte[] initialKey, byte[] comparisonKey) {
+        // TODO: Constant used below should be replaced!
+        for (int i=0; i<32; i++) { // Big-endian format!
+            int baseByte = baseKey[i] & 0xff; // Convert to unsigned int
+            int initialByte = initialKey[i] & 0xff;
+            int comparisonByte = comparisonKey[i] & 0xff;
+            if ((baseByte ^ comparisonByte) < (baseByte ^ initialByte)) {
+                return true;
+            }
+        }
         return false;
     }
 }
