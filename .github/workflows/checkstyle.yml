@@ -19,12 +19,12 @@ jobs:
       - name: Set Maven Wrapper
         run: mvn wrapper:wrapper -Dmaven=3.8.4
       - name: Checkstyle
-        run: ./mvnw install checkstyle:check -DskipTests=true --no-transfer-progress
+        run: ./mvnw site
       - name: Archive reports
         uses: actions/upload-artifact@v3
         with:
           name: checkstyle-reports
-          path: target/checkstyle-result.html
+          path: target/site/**/*
       - uses: jwgmeligmeyling/checkstyle-github-action@master
         with:
           path: '**/checkstyle-result.xml'
