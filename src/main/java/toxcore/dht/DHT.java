@@ -114,4 +114,16 @@ public class DHT implements Runnable {
     public int getPort() {
         return this.port;
     }
+
+    /**
+     * Indicates which of the keys is the closest to baseKey.
+     * @param baseKey Base key for comparison
+     * @param initialKey Initial key
+     * @param secondKey Key for comparison
+     * @return True if the key to compare is closer to the base key than the initial key, false otherwise.
+     */
+    public static boolean getClosest(byte[] baseKey, byte[] initialKey, byte[] secondKey) {
+        // TODO: The getClosest function!
+        return false;
+    }
 }
