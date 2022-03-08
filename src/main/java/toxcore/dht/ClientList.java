@@ -14,11 +14,22 @@ public class ClientList {
     }
 
     /**
-     * Add a given public key in the client list
-     * @param publicKey Key to add in the list
-     * @return
+     * Add a given public key in the client list.
+     * @param publicKey Key to add in the list.
+     * @return publicKey if it has been inserted in the list, null otherwise.
      */
     protected byte[] add(byte[] publicKey) {
-        return null;
+        // Check if list is full
+        if (this.clientList.size() >= this.size) {
+            return null;
+        }
+        for (int i=0; i<this.clientList.size(); i++) {
+            if (DHT.getClosest(this.baseKey, this.clientList.get(i), publicKey)) {
+                this.clientList.set(i, publicKey);
+                return publicKey;
+            }
+        }
+        this.clientList.add(publicKey);
+        return publicKey;
     }
 }
