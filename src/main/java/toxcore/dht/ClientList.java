@@ -11,6 +11,7 @@ public class ClientList {
     ClientList(final int size, final byte[] baseKey) {
         this.size = size;
         this.baseKey = baseKey;
+        this.clientList = new ArrayList<>();
     }
 
     /**
