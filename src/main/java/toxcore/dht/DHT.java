@@ -34,7 +34,7 @@ public class DHT implements Runnable {
         } else if (Platform.isMac()) {
             this.libraryPath = "/usr/local/lib/libsodium.dylib";
         } else {
-            this.libraryPath = "/usr/local/lib/libsodium.so";
+            this.libraryPath = "/usr/lib64/libsodium.so.23"; // /usr/local/lib/libsodium.so
         }
         SodiumLibrary.setLibraryPath(this.libraryPath);
 
@@ -125,11 +125,12 @@ public class DHT implements Runnable {
     public static boolean getClosest(byte[] baseKey, byte[] initialKey, byte[] comparisonKey) {
         // TODO: Constant used below should be replaced!
         for (int i=0; i<32; i++) { // Big-endian format!
-            int baseByte = baseKey[i] & 0xff; // Convert to unsigned int
-            int initialByte = initialKey[i] & 0xff;
-            int comparisonByte = comparisonKey[i] & 0xff;
-            if ((baseByte ^ comparisonByte) < (baseByte ^ initialByte)) {
+            int distanceToComparison = (baseKey[i] & 0xff) ^ (comparisonKey[i] & 0xff); // Convert to unsigned byte before xor
+            int distanceToInitial = (baseKey[i] & 0xff) ^ (initialKey[i] & 0xff);
+            if (distanceToComparison < distanceToInitial) {
                 return true;
+            } else if (distanceToComparison > distanceToInitial) {
+                return false;
             }
         }
         return false;
