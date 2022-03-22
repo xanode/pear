@@ -71,7 +71,7 @@ public class DHT implements Runnable {
         }
     }
 
-    private void closeDHT() {
+    public void close() {
         this.running = false;
         try {
             for (Thread thread: this.servicingThread) {
