@@ -4,13 +4,13 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
-public class NodeNetworkData {
+public class Node {
 
     private final byte[] nodeKey;
     private final InetAddress nodeAddress;
     private final int port;
 
-    protected NodeNetworkData(final byte[] nodeKey, final InetAddress nodeAdress, final int port) {
+    protected Node(final byte[] nodeKey, final InetAddress nodeAdress, final int port) {
         this.nodeKey = nodeKey;
         this.nodeAddress = nodeAdress;
         this.port = port;
