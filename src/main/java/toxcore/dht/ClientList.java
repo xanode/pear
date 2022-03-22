@@ -9,7 +9,7 @@ public class ClientList {
     private ArrayList<byte[]> clientList;
 
     ClientList(final int size, final byte[] baseKey) {
-        this.size = size;
+        this.size = size; // Should be set to 32
         this.baseKey = baseKey;
         this.clientList = new ArrayList<>();
     }
