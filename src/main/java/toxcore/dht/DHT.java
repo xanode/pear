@@ -7,6 +7,7 @@ import com.sun.jna.Platform;
 
 import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -34,7 +35,7 @@ public class DHT implements Runnable {
         } else if (Platform.isMac()) {
             this.libraryPath = "/usr/local/lib/libsodium.dylib";
         } else {
-            this.libraryPath = "/usr/local/lib/libsodium.so";
+            this.libraryPath = "/usr/lib64/libsodium.so.23"; // /usr/local/lib/libsodium.so
         }
         SodiumLibrary.setLibraryPath(this.libraryPath);
 
@@ -113,5 +114,30 @@ public class DHT implements Runnable {
 
     public int getPort() {
         return this.port;
+    }
+
+    /**
+     * Indicates which of the keys is the closest to baseKey.
+     * @param baseKey Base key for comparison
+     * @param initialKey Initial key
+     * @param comparisonKey Key for comparison
+     * @return True if the key to compare is closer to the base key than the initial key, false otherwise.
+     */
+    public static boolean getClosest(byte[] baseKey, byte[] initialKey, byte[] comparisonKey) {
+        // TODO: Constant used below should be replaced!
+        for (int i=0; i<32; i++) { // Big-endian format! (32 because 32 byte keys!)
+            int distanceToComparison = (baseKey[i] & 0xff) ^ (comparisonKey[i] & 0xff); // Convert to unsigned byte before xor
+            int distanceToInitial = (baseKey[i] & 0xff) ^ (initialKey[i] & 0xff);
+            if (distanceToComparison < distanceToInitial) {
+                return true;
+            } else if (distanceToComparison > distanceToInitial) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static BigInteger getDistance(byte[] baseKey, byte[] nodeKey) {
+        return (new BigInteger(1, baseKey)).xor(new BigInteger(1, nodeKey));
     }
 }
