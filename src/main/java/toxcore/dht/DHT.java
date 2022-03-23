@@ -1,11 +1,5 @@
 package toxcore.dht;
 
-import com.muquit.libsodiumjna.SodiumKeyPair;
-import com.muquit.libsodiumjna.SodiumLibrary;
-import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
-import com.sun.jna.Platform;
-
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
@@ -13,10 +7,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.muquit.libsodiumjna.SodiumKeyPair;
+import com.muquit.libsodiumjna.SodiumLibrary;
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import com.sun.jna.Platform;
 
 public class DHT implements Runnable {
     private final String libraryPath;
@@ -93,7 +90,7 @@ public class DHT implements Runnable {
     public void commandLine() {
         Scanner scanner = new Scanner(System.in);
         String command;
-        while(this.running) {
+        while (this.running) {
             System.out.println("DHT >> ");
             command = scanner.nextLine();
             if (command.toLowerCase().equals("close")) {
