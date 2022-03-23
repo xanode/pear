@@ -17,7 +17,9 @@ jobs:
           java-version: 17
           cache: maven
       - name: Setup libsodium
-        run: sudo apt-get install -y libsodium-dev
+        run:
+          - sudo apt-get install -y libsodium-dev
+          - sudo ln -s /usr/lib64/libsodium.so.23 /usr/lib/x86_64-linux-gnu/libsodium.so
       - name: Set Maven Wrapper
         run: mvn wrapper:wrapper -Dmaven=3.8.4
       - name: Unit-Test
