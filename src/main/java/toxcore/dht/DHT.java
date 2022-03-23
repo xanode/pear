@@ -97,11 +97,12 @@ public class DHT implements Runnable {
             System.out.println("DHT >> ");
             command = scanner.nextLine();
             if (command.toLowerCase().equals("close")) {
-                this.closeDHT();
+                this.close();
             } else {
                 System.out.println("Invalid command.");
             }
         }
+        scanner.close();
     }
 
     public byte[] getPublicKey() {
