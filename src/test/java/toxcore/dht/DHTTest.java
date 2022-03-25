@@ -26,4 +26,12 @@ class DHTTest {
         assertEquals(34567, dht.getPort());
     }
 
+    @Test
+    @DisplayName("Get keys")
+    void testGetKeys() throws SocketException, SodiumLibraryException {
+        DHT dht = new DHT(34567);
+        assertEquals(32, dht.getPublicKey().length);
+        assertEquals(32, dht.getPrivateKey().length);
+    }
+
 }
