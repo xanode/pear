@@ -19,12 +19,14 @@ public class KBucket {
             this.bucket.add(node);
         } else {
             // If not in the bucket and the bucket isn't full, insert it at the tail
-            if (this.bucket.size() < k) {
+            if (this.bucket.size() < this.k) {
                 this.bucket.add(node);
             } else {
-                // Should check if this.bucket.get(k-1) is still alive
-                // if not, replace it
-                // else discard node
+                // If the bucket is full
+                if (!this.bucket.get(this.k-1).isAlive()) {
+                    // Replace last node if it isn't alive anymore
+                    this.bucket.set(this.k-1, node);
+                }
             }
         }
 
