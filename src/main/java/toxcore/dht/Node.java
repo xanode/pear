@@ -58,4 +58,13 @@ public class Node {
                 .put(this.nodeKey)
                 .array();
     }
+
+    protected boolean isAlive() {
+        if (!this.nodeAddress.isAnyLocalAddress()) {
+            // TODO: check if the node is still alive
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
