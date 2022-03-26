@@ -1,6 +1,5 @@
 package toxcore.dht;
 
-import java.util.ArrayList;
 import java.util.BitSet;
 
 public class Buckets {
