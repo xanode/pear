@@ -4,20 +4,20 @@ import java.util.BitSet;
 
 public class Buckets {
 
-    private final byte[] baseKey;
-    private ClientList[] buckets;
+    private final Node baseNode;
+    private KBucket[] buckets;
 
-    Buckets(int size, final byte[] baseKey) {
-        this.baseKey = baseKey;
-        this.buckets = new ClientList[size]; // Should be 256 because there are 256 bits keys
+    Buckets(int size, final Node baseNode) {
+        this.baseNode = baseNode;
+        this.buckets = new KBucket[size]; // Size should be 256 because there are 256 bits keys
         for (int i=0; i<size; i++) {
-            this.buckets[i] = new ClientList(size, baseKey);
+            this.buckets[i] = new KBucket(32); // TODO: replace 32 by a constant
         }
     }
 
-    private int bucketIndex(byte[] nodeKey) {
-        BitSet nodeBitSet = BitSet.valueOf(nodeKey);
-        nodeBitSet.xor(BitSet.valueOf(this.baseKey));
+    private int bucketIndex(Node node) {
+        BitSet nodeBitSet = BitSet.valueOf(node.getNodeKey());
+        nodeBitSet.xor(BitSet.valueOf(this.baseNode.getNodeKey()));
         int i;
         for (i=255; i>=0; i--) { // 256 bits key
             if (nodeBitSet.get(i)) {
@@ -27,9 +27,9 @@ public class Buckets {
         return i;
     }
 
-    protected void update(byte[] nodeKey) {
-        int index = this.bucketIndex(nodeKey);
-        this.buckets[index].add(nodeKey);
+    protected void update(Node node) {
+        int index = this.bucketIndex(node);
+        this.buckets[index].update(node);
     }
 
 }
