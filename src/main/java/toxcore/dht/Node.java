@@ -19,7 +19,7 @@ public class Node {
     }
 
     /**
-     * Get node key.
+     * Get node public key.
      * @return the node public key.
      */
     protected byte[] getNodeKey() {
