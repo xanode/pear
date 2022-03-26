@@ -7,7 +7,7 @@ public class KBucket {
     private final int k;
     private final ArrayList<Node> bucket;
 
-    protected KBucket(final int k) {
+    KBucket(final int k) {
         this.k = k; // Original paper advise 20
         this.bucket = new ArrayList<>();
     }
