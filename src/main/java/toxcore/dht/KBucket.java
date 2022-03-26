@@ -31,4 +31,8 @@ public class KBucket {
         }
 
     }
+
+    protected int getSize() {
+        return this.bucket.size();
+    }
 }
