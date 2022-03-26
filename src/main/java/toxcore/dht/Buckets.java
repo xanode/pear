@@ -15,6 +15,11 @@ public class Buckets {
         }
     }
 
+    /**
+     * Indicates the KBucket in which the node should be added.
+     * @param node The node to add.
+     * @return The index of the KBucket to be filled.
+     */
     private int bucketIndex(Node node) {
         BitSet nodeBitSet = BitSet.valueOf(node.getNodeKey());
         nodeBitSet.xor(BitSet.valueOf(this.baseNode.getNodeKey()));
@@ -27,11 +32,20 @@ public class Buckets {
         return i;
     }
 
+    /**
+     * Update a KBucket with a new node.
+     * @param node The node that may be added to the KBucket.
+     */
     protected void update(Node node) {
         int index = this.bucketIndex(node);
         this.buckets[index].update(node);
     }
 
+    /**
+     * Get the list of the nearest known nodes.
+     * @param max The number of nodes wanted.
+     * @return The list of the nearest known nodes.
+     */
     protected ClientList getClosest(int max) {
         ClientList closest = new ClientList(max, this.baseNode);
         for (KBucket bucket: this.buckets) {
