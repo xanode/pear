@@ -17,45 +17,41 @@ public class ClientListTest {
     }
 
     @Test
-    @DisplayName("Add a public key in the client list")
+    @DisplayName("Add a node in the client list")
     void testAdd() {
-        ClientList clientList = new ClientList(32, getRandomKey());
+        ClientList clientList = new ClientList(32, getRandomNode());
 
-        byte[] key = getRandomKey();
+        Node node = getRandomNode();
 
-        assertEquals(clientList.add(key), true);
+        assertEquals(clientList.add(node), true);
     }
 
     @Test
     @DisplayName("Remove a public key in the client list")
     void testRemove() {
-        ClientList clientList = new ClientList(32, getRandomKey());
-        byte[] key = getRandomKey();
-        clientList.add(key);
+        ClientList clientList = new ClientList(32, getRandomNode());
+        Node node = getRandomNode();
+        clientList.add(node);
 
         // Remove the key
-        assertEquals(clientList.remove(key), true);
+        assertEquals(clientList.remove(node), true);
 
         // Try to remove it again
-        assertEquals(clientList.remove(key), false);
+        assertEquals(clientList.remove(node), false);
     }
 
     @Test
     @DisplayName("Add a client in a full list")
     void testAddFullList() {
-        ClientList clientList = new ClientList(32, getRandomKey());
-        byte[] key = new byte[32];
-        Random rd = new Random();
+        ClientList clientList = new ClientList(32, getRandomNode());
 
         // Fill the list
         for (int i = 0; i < 32; i++) {
-            rd.nextBytes(key);
-            clientList.add(key);
+            clientList.add(getRandomNode());
         }
 
         // Try to add a new key
-        rd.nextBytes(key);
-        assertEquals(clientList.add(key), false);
+        assertEquals(clientList.add(getRandomNode()), false);
     }
 
     /**
@@ -63,10 +59,15 @@ public class ClientListTest {
      *
      * @return A random key.
      */
-    static byte[] getRandomKey() {
-        byte[] key = new byte[32];
+    static byte[] getRandomNode() {
+        byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
-        rd.nextBytes(key);
-        return key;
+        rd.nextBytes(randomInetAddress);
+        Node node = new Node(
+                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                InetAddress.getByAddress(randomInetAddress),
+                rd.nextInt(65536)
+        );
+        return Node;
     }
 }
