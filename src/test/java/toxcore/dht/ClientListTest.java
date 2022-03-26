@@ -13,7 +13,7 @@ public class ClientListTest {
     @Test
     @DisplayName("Instanciate a ClientList")
     void testClientList() {
-        new ClientList(32, getRandomKey());
+        new ClientList(32, getRandomNode());
     }
 
     @Test
