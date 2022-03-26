@@ -35,4 +35,8 @@ public class KBucket {
     protected int getSize() {
         return this.bucket.size();
     }
+
+    protected ArrayList<Node> toArrayList() {
+        return this.bucket;
+    }
 }
