@@ -12,6 +12,10 @@ public class KBucket {
         this.bucket = new ArrayList<>();
     }
 
+    /**
+     * Update this KBucket with a new node.
+     * @param node The node to update the KBucket.
+     */
     protected void update(Node node) {
         // If the node already exist in the bucket, move it to the tail of the list
         if (this.bucket.contains(node)) {
@@ -32,10 +36,18 @@ public class KBucket {
 
     }
 
+    /**
+     * Get the actual size of the KBucket.
+     * @return The size of the KBucket.
+     */
     protected int getSize() {
         return this.bucket.size();
     }
 
+    /**
+     * Return the ArrayList to be able to iterate over the KBucket.
+     * @return The ArrayList of the KBucket.
+     */
     protected ArrayList<Node> toArrayList() {
         return this.bucket;
     }
