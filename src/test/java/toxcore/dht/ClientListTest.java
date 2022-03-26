@@ -59,7 +59,7 @@ public class ClientListTest {
      *
      * @return A random key.
      */
-    static byte[] getRandomNode() {
+    static Node getRandomNode() {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
         rd.nextBytes(randomInetAddress);
