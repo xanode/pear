@@ -1,5 +1,6 @@
 package toxcore.dht;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 
 public class Buckets {
@@ -30,6 +31,18 @@ public class Buckets {
     protected void update(Node node) {
         int index = this.bucketIndex(node);
         this.buckets[index].update(node);
+    }
+
+    protected ClientList getClosest(int max) {
+        ClientList closest = new ClientList(max, this.baseNode);
+        for (KBucket bucket: this.buckets) {
+            for (Node node: bucket.toArrayList()) {
+                if (!closest.add(node)) {
+                    break;
+                }
+            }
+        }
+        return closest;
     }
 
 }
