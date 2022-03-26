@@ -12,9 +12,9 @@ public class Node {
     private final int port;
     private Timestamp timestamp;
 
-    Node(final byte[] nodeKey, final InetAddress nodeAdress, final int port) {
+    Node(final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
         this.nodeKey = nodeKey;
-        this.nodeAddress = nodeAdress;
+        this.nodeAddress = nodeAddress;
         this.port = port;
     }
 
