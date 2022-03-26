@@ -2,8 +2,10 @@ package toxcore.dht;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.InetAddress;
 import java.util.Random;
 
+import com.muquit.libsodiumjna.SodiumLibrary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
