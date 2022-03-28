@@ -59,6 +59,10 @@ public class Node {
                 .array();
     }
 
+    /**
+     * Tell if a node is alive.
+     * @return True if the node is alive, false either.
+     */
     protected boolean isAlive() {
         if (!this.nodeAddress.isAnyLocalAddress()) {
             // TODO: check if the node is still alive
