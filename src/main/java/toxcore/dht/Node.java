@@ -42,6 +42,13 @@ public class Node {
         return this.port;
     }
 
+    /**
+     * Get the timestamp of the node.
+     * @return the timestamp of the node.
+     */
+    protected Timestamp getTimestamp() {
+        return this.timestamp;
+    }
 
     /**
      * Prepare data for packaging.
@@ -68,7 +75,11 @@ public class Node {
             // TODO: check if the node is still alive
             return false;
         } else {
+            // Update timestamp
+            this.timestamp = new Timestamp(System.currentTimeMillis());
             return true;
         }
     }
+
+
 }
