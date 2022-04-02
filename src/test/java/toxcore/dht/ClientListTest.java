@@ -3,16 +3,16 @@ package toxcore.dht;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 import com.muquit.libsodiumjna.SodiumLibrary;
-
-import org.junit.jupiter.api.Disabled;
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+
 @DisplayName("Test ClientList class")
-@Disabled("Needs refactoring")
 public class ClientListTest {
 
     @Test
@@ -52,7 +52,8 @@ public class ClientListTest {
 
         // Fill the list
         for (int i = 0; i < 32; i++) {
-            clientList.add(getRandomNode());
+            if (clientList.add(getRandomNode()) == true) {
+            }
         }
 
         // Try to add a new key
@@ -68,11 +69,16 @@ public class ClientListTest {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
         rd.nextBytes(randomInetAddress);
-        Node node = new Node(
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536)
-        );
-        return Node;
+        try {
+            Node node = new Node(
+                    SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                    InetAddress.getByAddress(randomInetAddress),
+                    rd.nextInt(65536)
+            );
+            return node;
+        } catch (SodiumLibraryException | UnknownHostException ignored) {
+            // Can't happen
+        }
+        return null;
     }
 }
