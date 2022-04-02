@@ -16,6 +16,7 @@ import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
 
 public class DHT implements Runnable {
+
     private final String libraryPath;
     final private byte[] publicKey;
     final private byte[] privateKey;
@@ -25,6 +26,7 @@ public class DHT implements Runnable {
     private byte[] buffer;
     private ArrayList<Thread> servicingThread;
     private boolean running = true;
+
     public DHT(int port) throws SodiumLibraryException, SocketException {
         // Load libsodium library first in order to generate public and private key
         if (Platform.isWindows()) {
