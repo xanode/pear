@@ -64,6 +64,14 @@ public class Node {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        int result = nodeKey.hashCode();
+        result = 31 * result + nodeAddress.hashCode();
+        result = 31 * result + port;
+        return result;
+    }
+
     /**
      * Prepare data for packaging.
      * @return Raw data into packed node format.
