@@ -4,6 +4,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 public class Node {
 
@@ -64,9 +65,7 @@ public class Node {
 
         if (port != node.port) return false;
         if (!nodeAddress.equals(node.nodeAddress)) return false;
-        if (!nodeKey.equals(node.nodeKey)) return false;
-
-        return true;
+        return Arrays.equals(nodeKey, node.nodeKey);
     }
 
     /**
@@ -75,7 +74,7 @@ public class Node {
      */
     @Override
     public int hashCode() {
-        int result = nodeKey.hashCode();
+        int result = Arrays.hashCode(nodeKey);
         result = 31 * result + nodeAddress.hashCode();
         result = 31 * result + port;
         return result;
