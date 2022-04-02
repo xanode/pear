@@ -50,6 +50,20 @@ public class Node {
         return this.timestamp;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Node node = (Node) o;
+
+        if (port != node.port) return false;
+        if (!nodeAddress.equals(node.nodeAddress)) return false;
+        if (!nodeKey.equals(node.nodeKey)) return false;
+
+        return true;
+    }
+
     /**
      * Prepare data for packaging.
      * @return Raw data into packed node format.
