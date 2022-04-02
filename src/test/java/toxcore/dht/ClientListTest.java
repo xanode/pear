@@ -6,10 +6,13 @@ import java.net.InetAddress;
 import java.util.Random;
 
 import com.muquit.libsodiumjna.SodiumLibrary;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Test ClientList class")
+@Disabled("Needs refactoring")
 public class ClientListTest {
 
     @Test
