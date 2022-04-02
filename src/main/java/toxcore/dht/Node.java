@@ -50,6 +50,11 @@ public class Node {
         return this.timestamp;
     }
 
+    /**
+     * Tell if a node equals another object.
+     * @param o The object to compare.
+     * @return True if the object is a node and if the node is the same, false either.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,6 +69,10 @@ public class Node {
         return true;
     }
 
+    /**
+     * Get the hashcode of the node.
+     * @return the hashcode of the node.
+     */
     @Override
     public int hashCode() {
         int result = nodeKey.hashCode();
