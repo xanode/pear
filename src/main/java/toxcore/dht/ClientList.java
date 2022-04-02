@@ -15,7 +15,7 @@ public class ClientList {
     }
 
     /**
-     * Add a given node in the client list.
+     * Add a given node in the client list, sorted by proximity to the base node.
      * @param node Node to add in the list.
      * @return True if it has been inserted in the list, false otherwise.
      */
@@ -26,7 +26,7 @@ public class ClientList {
         }
         for (int i=0; i<this.clientList.size(); i++) {
             if (DHT.getClosest(this.baseNode, this.clientList.get(i), node)) {
-                this.clientList.set(i, node);
+                this.clientList.add(i, node);
                 return true;
             }
         }
@@ -41,5 +41,13 @@ public class ClientList {
      */
     protected boolean remove(Node node) {
         return this.clientList.remove(node);
+    }
+
+    /**
+     * Get the actual size of the client list.
+     * @return The size of the list.
+     */
+    protected int getSize() {
+        return this.clientList.size();
     }
 }
