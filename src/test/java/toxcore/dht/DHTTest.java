@@ -3,6 +3,7 @@ package toxcore.dht;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.SocketException;
+import java.util.Random;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
@@ -15,21 +16,27 @@ class DHTTest {
     @Test
     @DisplayName("Instanciating a DHT and closing it")
     void testDHT() throws SocketException, SodiumLibraryException {
-        DHT dht = new DHT(34567);
+        Random r = new Random();
+        int port = r.nextInt(65535 - 1024) + 1024;
+        DHT dht = new DHT(port);
         dht.close();
     }
 
     @Test
     @DisplayName("Return the correct port")
     void testGetPort() throws SocketException, SodiumLibraryException {
-        DHT dht = new DHT(34567);
-        assertEquals(34567, dht.getPort());
+        Random r = new Random();
+        int port = r.nextInt(65535 - 1024) + 1024;
+        DHT dht = new DHT(port);
+        assertEquals(port, dht.getPort());
     }
 
     @Test
     @DisplayName("Get keys")
     void testGetKeys() throws SocketException, SodiumLibraryException {
-        DHT dht = new DHT(34567);
+        Random r = new Random();
+        int port = r.nextInt(65535 - 1024) + 1024;
+        DHT dht = new DHT(port);
         assertEquals(32, dht.getPublicKey().length);
         assertEquals(32, dht.getPrivateKey().length);
     }
