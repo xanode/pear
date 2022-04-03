@@ -11,9 +11,9 @@ public class DHT {
 
     // Constants
     // Crypto-related constants
-    protected final byte CRYPTO_PUBLIC_KEY_SIZE = 32;
-    protected final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
-    protected final byte CRYPTO_NONCE_SIZE = 24;
+    protected static final byte CRYPTO_PUBLIC_KEY_SIZE = 32;
+    protected static final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
+    protected static final byte CRYPTO_NONCE_SIZE = 24;
 
     // Attributes
     private final String libraryPath;
@@ -59,7 +59,7 @@ public class DHT {
      * Generate a random nonce.
      * @return a random nonce
      */
-    public byte[] generateNonce() {
+    public byte[] generateNonce() { // Should be static?
         return SodiumLibrary.randomBytes(CRYPTO_NONCE_SIZE);
     }
 
