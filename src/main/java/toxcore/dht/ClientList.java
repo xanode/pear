@@ -26,7 +26,7 @@ public class ClientList {
             return false;
         }
         for (int i=0; i<this.clientList.size(); i++) {
-            if (DHT.getClosest(this.baseNode, this.clientList.get(i), node)) {
+            if (this.getClosest(this.clientList.get(i), node)) {
                 this.clientList.add(i, node);
                 return true;
             }
@@ -50,5 +50,28 @@ public class ClientList {
      */
     protected int getSize() {
         return this.clientList.size();
+    }
+
+    /**
+     * Indicates which of the node is closer to the base node.
+     * @param node1 First node.
+     * @param node2 Second node.
+     * @return True if node1 is closer to the base node, false otherwise.
+     */
+    private boolean getClosest(Node node1, Node node2) {
+        // TODO: Constant used below should be replaced!
+        byte[] baseKey = this.baseNode.getNodeKey();
+        byte[] key1 = node1.getNodeKey();
+        byte[] key2 = node2.getNodeKey();
+        for (int i=0; i<32; i++) { // Big-endian format! (32 because 32 byte keys!)
+            int distanceToComparison = (baseKey[i] & 0xff) ^ (key2[i] & 0xff); // Convert to unsigned byte before xor
+            int distanceToInitial = (baseKey[i] & 0xff) ^ (key1[i] & 0xff);
+            if (distanceToComparison < distanceToInitial) {
+                return true;
+            } else if (distanceToComparison > distanceToInitial) {
+                return false;
+            }
+        }
+        return false;
     }
 }
