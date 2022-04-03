@@ -15,7 +15,7 @@ public class Node {
 
     Node(final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
         this.nodeKey = nodeKey;
-        this.nodeAddress = nodeAddress;
+        this.nodeAddress = nodeAddress; // TODO: deny broadcast / multicast addresses
         this.port = port;
     }
 
