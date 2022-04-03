@@ -1,6 +1,8 @@
 package toxcore.dht;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 public class Ping {
 
@@ -85,4 +87,30 @@ public class Ping {
         return receivedDate != null && receivedDate.getTime() < sentDate.getTime() + 100e3; // 100s timeout should be replaced by a constant
     }
 
+    /**
+     * Tell if the ping equals another object.
+     * @param o the object to compare
+     * @return true if the object equals the ping, false otherwise
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Ping ping = (Ping) o;
+
+        if (!node.equals(ping.node)) return false;
+        return Objects.equals(pingId, ping.pingId);
+    }
+
+    /**
+     * Compute the hash code of the ping.
+     * @return the hash code of the ping
+     */
+    @Override
+    public int hashCode() {
+        int result = node.hashCode();
+        result = 31 * result + (pingId != null ? Arrays.hashCode(pingId) : 0);
+        return result;
+    }
 }
