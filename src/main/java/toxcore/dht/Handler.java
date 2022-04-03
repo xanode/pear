@@ -1,15 +1,17 @@
 package toxcore.dht;
 
-import java.net.DatagramPacket;
+import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class Handler implements Runnable {
+public abstract class Handler<K, V> {
 
-    final Manager manager;
-    final DatagramPacket packet;
+    private ConcurrentHashMap<K, V> IPCCache;
 
-    protected Handler(Manager manager, DatagramPacket packet) {
-        this.manager = manager;
-        this.packet = packet;
+    protected Handler(){
+        this.IPCCache = new ConcurrentHashMap<K, V>();
+    }
+
+    protected void handleIPCCall(K key, V value) {
+        this.IPCCache.put(key, value);
     }
 
 }
