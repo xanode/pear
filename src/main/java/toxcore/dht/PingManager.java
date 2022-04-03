@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class PingManager extends Manager {
 
     private HashMap<byte[], Handler> askedPing;
-    private HashMap<byte[], Thread> handledPing;
+    private HashMap<byte[], PingHandler> handledPing;
 
     protected PingManager(int port) throws SocketException {
         super(port);
@@ -28,5 +28,9 @@ public class PingManager extends Manager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void sendPing(Node node) {
+        //this.socket.send();
     }
 }
