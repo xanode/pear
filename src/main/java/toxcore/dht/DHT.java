@@ -28,7 +28,7 @@ public class DHT {
         } else if (Platform.isMac()) {
             this.libraryPath = "/usr/local/lib/libsodium.dylib";
         } else {
-            this.libraryPath = "/usr/lib/libsodium.so"; // TODO: the right place depend on the distro
+            this.libraryPath = "/usr/lib64/libsodium.so.23"; // TODO: the right place depend on the distro
         }
         SodiumLibrary.setLibraryPath(this.libraryPath);
 
@@ -44,7 +44,7 @@ public class DHT {
                 InetAddress.getLoopbackAddress(),
                 Network.PING_PORT
         );
-        this.buckets = new Buckets(node, (int) Math.pow(2, CRYPTO_PUBLIC_KEY_SIZE)); // Size in Buckets is the number of bits in the public key
+        this.buckets = new Buckets(node, 8 * CRYPTO_PUBLIC_KEY_SIZE); // Size in Buckets is the number of bits in the public key
     }
 
     /**
@@ -64,26 +64,29 @@ public class DHT {
     }
 
     /**
-     * Encrypt data with the public key of the DHT
+     * Encrypt data with the public key of the receiver and sign it with the private key of the DHT
+     * @param receiverPublicKey the public key of the receiver
+     * @param nonce the nonce used to encrypt the data
      * @param data the data to encrypt
      * @return the encrypted data
      * @throws SodiumLibraryException in case of error
      */
-    public byte[] encrypt(byte[] nonce, byte[] data) throws SodiumLibraryException {
+    public byte[] encrypt(byte[] receiverPublicKey, byte[] nonce, byte[] data) throws SodiumLibraryException {
         // Encrypt data and return it
-        return SodiumLibrary.cryptoSecretBoxEasy(data, nonce, this.publicKey);
+        return SodiumLibrary.cryptoBoxEasy(data, nonce, receiverPublicKey, this.privateKey);
     }
 
     /**
-     * Verify and decrypt data with the private key of the DHT
+     * Verify data with the receiver public key and decrypt it with the private key of the DHT
+     * @param senderPublicKey the public key of the sender of the data
      * @param nonce the nonce used to encrypt the data
      * @param data the data to decrypt
      * @return the decrypted data
      * @throws SodiumLibraryException in case of error
      */
-    public byte[] decrypt(byte[] nonce, byte[] data) throws SodiumLibraryException {
+    public byte[] decrypt(byte[] senderPublicKey, byte[] nonce, byte[] data) throws SodiumLibraryException {
         // Decrypt data and return it
-        return SodiumLibrary.cryptoSecretBoxOpenEasy(data, nonce, this.privateKey);
+        return SodiumLibrary.cryptoBoxOpenEasy(data, nonce, senderPublicKey, this.privateKey);
     }
 
 }
