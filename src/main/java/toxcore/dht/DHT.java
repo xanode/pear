@@ -56,14 +56,20 @@ public class DHT {
     }
 
     /**
+     * Generate a random nonce.
+     * @return a random nonce
+     */
+    public byte[] generateNonce() {
+        return SodiumLibrary.randomBytes(CRYPTO_NONCE_SIZE);
+    }
+
+    /**
      * Encrypt data with the public key of the DHT
      * @param data the data to encrypt
      * @return the encrypted data
      * @throws SodiumLibraryException in case of error
      */
-    public byte[] encrypt(byte[] data) throws SodiumLibraryException {
-        // Generate a nonce
-        byte[] nonce = SodiumLibrary.randomBytes(CRYPTO_NONCE_SIZE);
+    public byte[] encrypt(byte[] nonce, byte[] data) throws SodiumLibraryException {
         // Encrypt data and return it
         return SodiumLibrary.cryptoSecretBoxEasy(data, nonce, this.publicKey);
     }
