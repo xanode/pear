@@ -7,7 +7,7 @@ public class Buckets {
     private final Node baseNode;
     private KBucket[] buckets;
 
-    Buckets(int size, final Node baseNode) {
+    Buckets(final Node baseNode, int size) {
         this.baseNode = baseNode;
         this.buckets = new KBucket[size]; // Size should be 256 because there are 256 bits keys
         for (int i=0; i<size; i++) {
