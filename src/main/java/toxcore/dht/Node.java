@@ -14,8 +14,12 @@ public class Node {
     private Timestamp timestamp;
 
     Node(final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
+        if (nodeAddress.isMulticastAddress()) {
+            // Do not accept multicast address it cannot represent a node
+            throw new IllegalArgumentException("Multicast address not allowed");
+        }
         this.nodeKey = nodeKey;
-        this.nodeAddress = nodeAddress; // TODO: deny broadcast / multicast addresses
+        this.nodeAddress = nodeAddress;
         this.port = port;
     }
 
