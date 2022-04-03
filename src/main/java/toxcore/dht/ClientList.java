@@ -20,6 +20,7 @@ public class ClientList {
      * @return True if it has been inserted in the list, false otherwise.
      */
     protected boolean add(Node node) {
+        // TODO: A node should be added only if it is closer than the farthest node in the list.
         // Check if list is full
         if (this.clientList.size() >= this.size) {
             return false;
