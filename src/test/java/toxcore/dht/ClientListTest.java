@@ -69,6 +69,7 @@ public class ClientListTest {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
         rd.nextBytes(randomInetAddress);
+        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
         try {
             Node node = new Node(
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),

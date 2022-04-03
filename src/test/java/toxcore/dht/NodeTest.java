@@ -23,6 +23,7 @@ public class NodeTest {
         Node node = null;
         try {
             rd.nextBytes(randomInetAddress);
+            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node = new Node(
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
@@ -45,6 +46,7 @@ public class NodeTest {
             // Generate random values
             byte[] publicKey = SodiumLibrary.cryptoBoxKeyPair().getPublicKey();
             rd.nextBytes(randomInetAddress);
+            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             int port = rd.nextInt(65536);
 
             node1 = new Node(
@@ -74,12 +76,14 @@ public class NodeTest {
         Node node2 = null;
         try {
             rd.nextBytes(randomInetAddress);
+            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node1 = new Node(
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
             );
             rd.nextBytes(randomInetAddress);
+            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node2 = new Node(
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
