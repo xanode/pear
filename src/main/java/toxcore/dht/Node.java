@@ -73,7 +73,7 @@ public class Node {
     }
 
     /**
-     * Get the hashcode of the node.
+     * Compute the hashcode of the node.
      * @return the hashcode of the node.
      */
     @Override
