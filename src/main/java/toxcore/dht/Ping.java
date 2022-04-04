@@ -100,7 +100,7 @@ public class Ping {
         Ping ping = (Ping) o;
 
         if (!node.equals(ping.node)) return false;
-        return Objects.equals(pingId, ping.pingId);
+        return Arrays.equals(pingId, ping.pingId);
     }
 
     /**
