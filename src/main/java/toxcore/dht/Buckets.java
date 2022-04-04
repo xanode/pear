@@ -47,6 +47,7 @@ public class Buckets {
      * @return The list of the nearest known nodes.
      */
     protected ClientList getClosest(int max) {
+        // Use getClosestTo with the base node as parameter?
         ClientList closest = new ClientList(max, this.baseNode);
         for (KBucket bucket: this.buckets) {
             for (Node node: bucket.toArrayList()) {
