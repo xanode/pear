@@ -6,12 +6,12 @@ import java.util.Objects;
 
 public class Ping {
 
-    private Node node;
-    private byte[] pingId;
+    private final Node node;
+    private final byte[] pingId;
     private Date sentDate;
     private Date receivedDate;
 
-    public Ping(Node node, byte[] pingId) {
+    public Ping(final Node node, final byte[] pingId) {
         this.node = node;
         this.pingId = pingId;
         this.sentDate = new Date();
