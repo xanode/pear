@@ -11,7 +11,7 @@ public class Buckets {
         this.baseNode = baseNode;
         this.buckets = new KBucket[size]; // Size should be 256 because there are 256 bits keys
         for (int i=0; i<size; i++) {
-            this.buckets[i] = new KBucket(32); // TODO: replace 32 by a constant
+            this.buckets[i] = new KBucket(DHT.CRYPTO_PUBLIC_KEY_SIZE);
         }
     }
 
