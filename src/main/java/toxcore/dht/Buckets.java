@@ -24,7 +24,7 @@ public class Buckets {
         BitSet nodeBitSet = BitSet.valueOf(node.getNodeKey());
         nodeBitSet.xor(BitSet.valueOf(this.baseNode.getNodeKey()));
         int i;
-        for (i=255; i>=0; i--) { // 256 bits key
+        for (i=(8 * DHT.CRYPTO_PUBLIC_KEY_SIZE - 1); i>=0; i--) { // 256 bits key
             if (nodeBitSet.get(i)) {
                 break;
             }
