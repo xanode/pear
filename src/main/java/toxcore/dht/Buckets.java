@@ -58,4 +58,20 @@ public class Buckets {
         return closest;
     }
 
+    /**
+     * Get the list of the nearest known nodes from a given node.
+     * @param node The node from which the list of the nearest known nodes is wanted.
+     * @param max The number of nodes wanted.
+     * @return The list of the nearest known nodes.
+     */
+    protected ClientList getClosestTo(Node node, int max) {
+        ClientList closest = new ClientList(max, node);
+        for (Node currentNode: this.buckets[this.bucketIndex(node)].toArrayList()) { // TODO: If there is nothing in that bucket?
+            if (!closest.add(currentNode)) {
+                break;
+            }
+        }
+        return closest;
+    }
+
 }
