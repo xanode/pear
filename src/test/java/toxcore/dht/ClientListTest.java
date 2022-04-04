@@ -2,6 +2,7 @@ package toxcore.dht;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.lang.RuntimeException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -10,6 +11,7 @@ import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import com.sun.jna.Platform;
 
 
 @DisplayName("Test ClientList class")
@@ -66,6 +68,21 @@ public class ClientListTest {
      * @return A random key.
      */
     static Node getRandomNode() {
+        // Load libsodium library if necessary
+        try {
+            SodiumLibrary.libsodiumVersionString(); // Does nothing if libsodium is already loaded
+        } catch (RuntimeException ignored) {
+            String libraryPath;
+            if (Platform.isWindows()) {
+                libraryPath = "C:/libsodium/libsodium.dll";
+            } else if (Platform.isMac()) {
+                libraryPath = "/usr/local/lib/libsodium.dylib";
+            } else {
+                libraryPath = "/usr/lib64/libsodium.so.23";
+            }
+            SodiumLibrary.setLibraryPath(libraryPath);
+        }
+        // Generate a random node
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
         rd.nextBytes(randomInetAddress);
