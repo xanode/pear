@@ -2,7 +2,6 @@ package toxcore.dht;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Objects;
 
 public class Ping {
 
