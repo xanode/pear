@@ -17,16 +17,6 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Test Node class")
 public class NodeTest {
 
-    @Test
-    @DisplayName("Initializa SodiumLibrary")
-    void initializeSodiumLibrary() {
-        // We just need to instanciate a DHT to initialize the Sodium library
-        try {
-            new DHT();
-        } catch (SodiumLibraryException ignored) {
-        }
-    }
-
     // TODO: Test with IPv6 addresses !
 
     @Test
@@ -39,7 +29,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node = new Node(
-                    null, // DHT is not used here
+                    new DHT(), // Necessary to initialize the Sodium library
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
@@ -59,7 +49,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) 224; // Force the address to be a multicast address (RFC 5771)
             node = new Node(
-                    null, // DHT is not used here
+                    new DHT(), // Necessary to initialize the Sodium library
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
@@ -85,15 +75,15 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             int port = rd.nextInt(65536);
-
+            DHT dht = new DHT(); // Necessary to initialize the Sodium library
             node1 = new Node(
-                    null, // DHT is not used here
+                    dht,
                     publicKey,
                     InetAddress.getByAddress(randomInetAddress),
                     port
             );
             node2 = new Node(
-                    null, // DHT is not used here
+                    dht,
                     publicKey,
                     InetAddress.getByAddress(randomInetAddress),
                     port
@@ -117,7 +107,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node1 = new Node(
-                    null, // DHT is not used here
+                    new DHT(), // Necessary to initialize the Sodium library
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
@@ -125,7 +115,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node2 = new Node(
-                    null, // DHT is not used here
+                    new DHT(), // Necessary to initialize the Sodium library
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
