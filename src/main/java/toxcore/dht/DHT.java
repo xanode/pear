@@ -6,6 +6,7 @@ import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
 
 import java.net.InetAddress;
+import java.net.SocketException;
 
 public class DHT {
 
@@ -20,8 +21,9 @@ public class DHT {
     private final byte[] publicKey;
     private final byte[] privateKey;
     private Buckets buckets;
+    private Network network;
 
-    public DHT() throws SodiumLibraryException {
+    public DHT() throws SodiumLibraryException, SocketException {
         // Load libsodium library
         if (Platform.isWindows()) {
             this.libraryPath = "C:/libsodium/libsodium.dll";
@@ -40,11 +42,15 @@ public class DHT {
         // Initialize buckets
         // Create a node with our public key
         Node node = new Node(
+                this,
                 this.publicKey,
                 InetAddress.getLoopbackAddress(),
                 Network.PING_PORT
         );
         this.buckets = new Buckets(node, 8 * CRYPTO_PUBLIC_KEY_SIZE); // Size in Buckets is the number of bits in the public key
+
+        // Initialize network
+        this.network = new Network(this);
     }
 
     /**
@@ -53,6 +59,14 @@ public class DHT {
      */
     public byte[] getPublicKey() {
         return this.publicKey;
+    }
+
+    /**
+     * Get the network instance of the DHT
+     * @return the network instance of the DHT
+     */
+    public Network getNetwork() {
+        return this.network;
     }
 
     /**

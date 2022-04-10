@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Network {
 
@@ -24,6 +25,7 @@ public class Network {
     protected static final byte SIZE_IP6 = 16;
     private static final int MAX_UDP_PACKET_SIZE = 65536;
     // Ping related constants
+    protected static final int PING_ID_LENGTH = 8;
     protected static final int PING_PORT = 33445;
     protected static final int PING_TIMEOUT = 10000; // ms
 
@@ -31,6 +33,7 @@ public class Network {
     protected final DHT dht;
     protected final DatagramSocket pingSocket;
     private boolean running;
+    private ConcurrentHashMap <byte[], IPCCallback> ipcCallbacks; // byte[] is the node address, the node port and the expected response type
 
     protected Network(DHT dht) throws SocketException {
         this.dht = dht;
@@ -43,10 +46,25 @@ public class Network {
      */
     protected void handle() {
         while (running) {
-            DatagramPacket receivedPingPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
+            DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
             try {
-                this.pingSocket.receive(receivedPingPacket);
-                // TODO: Handle received ping packets
+                this.pingSocket.receive(receivedPacket);
+                // Decode packet
+                byte[] identifier = ByteBuffer.allocate(receivedPacket.getAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
+                        .put(receivedPacket.getAddress().getAddress())
+                        .putShort((short) receivedPacket.getPort())
+                        .put(receivedPacket.getData(), 0, PACKET_TYPE_LENGTH)
+                        .array();
+                // Get IPC callback if it exists
+                IPCCallback callback = ipcCallbacks.get(identifier);
+                if (callback != null) { // It is a response
+                    // Call callback
+                    callback.onCallback();
+                    // Remove callback
+                    ipcCallbacks.remove(identifier);
+                }
+                // TODO: If it is not a response, we should answer to the request, or it won't ever work
+                // TODO: Handle this in a thread
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -91,7 +109,11 @@ public class Network {
      * @param payload The payload of the packet to send.
      * @param node The node to send the packet to.
      */
-    protected void sendPacket(byte type, byte[] payload, Node node) throws SodiumLibraryException {
+    protected void sendPacket(byte type, byte[] payload, Node node, IPCCallback ipcCallback) throws SodiumLibraryException {
+        // Check if type is valid
+        if (type != PACKET_PING_REQUEST_TYPE && type != PACKET_PING_RESPONSE_TYPE && type != PACKET_FIND_NODE_REQUEST_TYPE && type != PACKET_FIND_NODE_RESPONSE_TYPE) {
+            throw new IllegalArgumentException("Invalid packet type: " + type);
+        }
         // Encrypt payload
         byte[] nonce = dht.generateNonce();
         byte[] encryptedPayload = dht.encrypt(node.getNodeKey(), nonce, payload);
@@ -109,6 +131,19 @@ public class Network {
         // Send packet
         try {
             this.pingSocket.send(pingPacket);
+            // Register it to handle response
+            byte expectedResponseType;
+            switch (type) {
+                case PACKET_PING_REQUEST_TYPE -> expectedResponseType = PACKET_PING_RESPONSE_TYPE;
+                case PACKET_FIND_NODE_REQUEST_TYPE -> expectedResponseType = PACKET_FIND_NODE_RESPONSE_TYPE;
+                default -> throw new IllegalArgumentException("Invalid packet type: " + type);
+            }
+            byte[] identifier = ByteBuffer.allocate(node.getNodeAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
+                    .put(node.getNodeAddress().getAddress())
+                    .putShort((short)node.getPort())
+                    .put(expectedResponseType)
+                    .array();
+            this.ipcCallbacks.put(identifier, ipcCallback);
         } catch (IOException e) {
             e.printStackTrace();
         }

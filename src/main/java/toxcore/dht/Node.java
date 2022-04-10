@@ -1,23 +1,27 @@
 package toxcore.dht;
 
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.sql.Timestamp;
+import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.concurrent.TimeoutException;
 
 public class Node {
 
+    private final DHT dht;
     private final byte[] nodeKey;
     private final InetAddress nodeAddress;
     private final int port;
-    private Timestamp timestamp;
 
-    Node(final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
+    Node(final DHT dht, final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
         if (nodeAddress.isMulticastAddress()) {
             // Do not accept multicast address it cannot represent a node
             throw new IllegalArgumentException("Multicast address not allowed");
         }
+        this.dht = dht;
         this.nodeKey = nodeKey;
         this.nodeAddress = nodeAddress;
         this.port = port;
@@ -48,11 +52,11 @@ public class Node {
     }
 
     /**
-     * Get the timestamp of the node.
-     * @return the timestamp of the node.
+     * Get the DHT instance of the node.
+     * @return the DHT instance of the node.
      */
-    protected Timestamp getTimestamp() {
-        return this.timestamp;
+    protected DHT getDHT() {
+        return this.dht;
     }
 
     /**
@@ -89,8 +93,8 @@ public class Node {
      * @return Raw data into packed node format.
      */
     protected byte[] prepareRawData() {
-        int lengthAddress = (this.nodeAddress instanceof Inet4Address) ? 4 : 16;
-        int addressFamily = (this.nodeAddress instanceof Inet4Address) ? 2 : 10;
+        int lengthAddress = (this.nodeAddress instanceof Inet4Address) ? Network.SIZE_IP4 : Network.SIZE_IP6;
+        int addressFamily = (this.nodeAddress instanceof Inet4Address) ? Network.PEAR_AF_INET : Network.PEAR_AF_INET6;
         return ByteBuffer.allocate(1+7+lengthAddress+2+32)
                 .put((byte)0) // Only UDP for now
                 .put((byte)addressFamily)
@@ -109,11 +113,17 @@ public class Node {
             // TODO: check if the node is still alive
             return false;
         } else {
-            // Update timestamp
-            this.timestamp = new Timestamp(System.currentTimeMillis());
+            byte[] pingId = new byte[Network.PING_ID_LENGTH];
+            new SecureRandom().nextBytes(pingId);
+            Ping ping = new Ping(this, pingId);
+            try {
+                ping.execute();
+            } catch (SodiumLibraryException e) {
+                e.printStackTrace(); // Should never happen
+            } /*catch (TimeoutException e) {
+                return false; // Timeout
+            }*/
             return true;
         }
     }
-
-
 }

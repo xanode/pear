@@ -1,9 +1,12 @@
 package toxcore.dht;
 
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Date;
 
-public class Ping {
+public class Ping implements IPCCallback {
 
     private final Node node;
     private final byte[] pingId;
@@ -13,7 +16,6 @@ public class Ping {
     public Ping(final Node node, final byte[] pingId) {
         this.node = node;
         this.pingId = pingId;
-        this.sentDate = new Date();
     }
 
     /**
@@ -111,5 +113,37 @@ public class Ping {
         int result = node.hashCode();
         result = 31 * result + (pingId != null ? Arrays.hashCode(pingId) : 0);
         return result;
+    }
+
+    /**
+     * Prepare data to build a ping packet.
+     * @return the data to build a ping packet
+     */
+    private byte[] getPingRequestPayload() {
+        return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + Network.PING_ID_LENGTH)
+                .put(Network.PACKET_PING_REQUEST_TYPE)
+                .put(this.pingId)
+                .array();
+    }
+
+    /**
+     * Execute the ping.
+     */
+    public void execute() throws SodiumLibraryException {
+        // Send a ping request to the node
+        Network network = this.node.getDHT().getNetwork();
+        network.sendPacket(Network.PACKET_PING_REQUEST_TYPE, this.getPingRequestPayload(), this.node, this);
+        this.sentDate = new Date(); // Set the sent date
+        while (!isReceived()) {
+            // TODO: handle timeout
+        }
+    }
+
+    /**
+     * Set received date when callback is called.
+     */
+    @Override
+    public void onCallback() {
+        setReceivedDate(new Date());
     }
 }
