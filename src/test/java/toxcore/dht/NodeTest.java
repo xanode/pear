@@ -18,7 +18,16 @@ import org.junit.jupiter.api.Test;
 public class NodeTest {
 
 
-     // TODO: Test with IPv6 addresses !
+    void initializeSodiumLibrary() {
+        // We just need to instanciate a DHT to initialize the Sodium library
+        try {
+            new DHT();
+        } catch (SodiumLibraryException ignored) {
+        }
+    }
+    }
+
+    // TODO: Test with IPv6 addresses !
 
     @Test
     @DisplayName("Test Node constructor without (IPv4) multicast address")
