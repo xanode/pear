@@ -25,7 +25,6 @@ public class NodeTest {
         } catch (SodiumLibraryException ignored) {
         }
     }
-    }
 
     // TODO: Test with IPv6 addresses !
 
