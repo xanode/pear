@@ -30,6 +30,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node = new Node(
+                    null, // DHT is not used here
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
@@ -49,6 +50,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) 224; // Force the address to be a multicast address (RFC 5771)
             node = new Node(
+                    null, // DHT is not used here
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
@@ -76,11 +78,13 @@ public class NodeTest {
             int port = rd.nextInt(65536);
 
             node1 = new Node(
+                    null, // DHT is not used here
                     publicKey,
                     InetAddress.getByAddress(randomInetAddress),
                     port
             );
             node2 = new Node(
+                    null, // DHT is not used here
                     publicKey,
                     InetAddress.getByAddress(randomInetAddress),
                     port
@@ -104,6 +108,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node1 = new Node(
+                    null, // DHT is not used here
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)
@@ -111,6 +116,7 @@ public class NodeTest {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
             node2 = new Node(
+                    null, // DHT is not used here
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)

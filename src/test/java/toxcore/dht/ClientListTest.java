@@ -89,6 +89,7 @@ public class ClientListTest {
         randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address (RFC 5771)
         try {
             Node node = new Node(
+                    null, // DHT is not used in those tests
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
                     rd.nextInt(65536)

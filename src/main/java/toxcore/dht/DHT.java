@@ -6,7 +6,6 @@ import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
 
 import java.net.InetAddress;
-import java.net.SocketException;
 
 public class DHT {
 
@@ -23,7 +22,7 @@ public class DHT {
     private Buckets buckets;
     private Network network;
 
-    public DHT() throws SodiumLibraryException, SocketException {
+    public DHT() throws SodiumLibraryException {
         // Load libsodium library
         if (Platform.isWindows()) {
             this.libraryPath = "C:/libsodium/libsodium.dll";

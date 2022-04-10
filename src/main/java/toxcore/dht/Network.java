@@ -31,20 +31,20 @@ public class Network {
 
     // Attributes
     protected final DHT dht;
-    protected final DatagramSocket pingSocket;
+    protected DatagramSocket pingSocket;
     private boolean running;
     private ConcurrentHashMap <byte[], IPCCallback> ipcCallbacks; // byte[] is the node address, the node port and the expected response type
 
-    protected Network(DHT dht) throws SocketException {
+    protected Network(DHT dht) {
         this.dht = dht;
-        this.pingSocket = new DatagramSocket(PING_PORT);
-        this.running = true;
     }
 
     /**
      * Handle received packets.
      */
-    protected void handle() {
+    protected void handle() throws SocketException {
+        this.pingSocket = new DatagramSocket(PING_PORT);
+        this.running = true;
         while (running) {
             DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
             try {
