@@ -17,7 +17,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Test Node class")
 public class NodeTest {
 
-
+    @Test
+    @DisplayName("Initializa SodiumLibrary")
     void initializeSodiumLibrary() {
         // We just need to instanciate a DHT to initialize the Sodium library
         try {
