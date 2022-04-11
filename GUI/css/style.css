@@ -40,11 +40,22 @@ header .header_title {
   border-style: solid;
   border-color: black;
   border-width: 2px;
+  background-size: auto 80%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .sideNav_home:hover, .sideNav_network:hover {
   background-color: #356d35;
   cursor: pointer;
+}
+
+.sideNav_home {
+  background-image: url("../assets/icons/800px-Globe_icon_2png.png");
+}
+
+.sideNav_network {
+  background-image: url("../assets/icons/2461391.png");
 }
 
 .footer {

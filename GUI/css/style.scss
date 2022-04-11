@@ -41,12 +41,24 @@ header{
         border-style: solid;
         border-color: black;
         border-width: 2px;
+        background-size: auto 80%;
+        background-repeat: no-repeat;
+        background-position: center;
     }
 
     &_home:hover, &_network:hover{
         background-color: rgb(53, 109, 53);
         cursor:pointer;
     }
+
+    &_home {
+        background-image: url("../assets/icons/800px-Globe_icon_2png.png");
+    }
+
+    &_network {
+        background-image: url("../assets/icons/2461391.png");
+    }
+
 }
 
 
