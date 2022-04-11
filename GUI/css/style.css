@@ -1,6 +1,7 @@
 header {
   height: 60px;
-  background-color: #7dff7d;
+  background: #A7D6AA;
+  border-radius: 15px 15px 15px 0px;
 }
 
 header .header_logo {
@@ -25,7 +26,9 @@ header .header_title {
 }
 
 .sideNav {
-  background-color: #36a736;
+  background: #a7d6aa;
+  background: -webkit-gradient(linear, left top, left bottom, from(#a7d6aa), to(#f8ffa7));
+  background: linear-gradient(180deg, #a7d6aa 0%, #f8ffa7 100%);
   width: 70px;
   height: 82vh;
   margin-top: 0px;
@@ -39,15 +42,16 @@ header .header_title {
   text-decoration: none;
   border-style: solid;
   border-color: black;
-  border-width: 2px;
+  border-width: 1px;
   background-size: auto 80%;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .sideNav_home:hover, .sideNav_network:hover {
-  background-color: #356d35;
+  background-color: #f8ffa7;
   cursor: pointer;
+  background-size: auto 100%;
 }
 
 .sideNav_home {
@@ -62,6 +66,7 @@ header .header_title {
   background-color: #474747;
   height: 50px;
   margin-top: -16px;
+  border-radius: 0px 10px 10px 10px;
 }
 
 .footer p {

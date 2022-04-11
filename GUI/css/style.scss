@@ -1,6 +1,7 @@
 header{
     height: 60px;
-    background-color: rgb(125, 255, 125);
+    background: #A7D6AA;
+    border-radius: 15px 15px 15px 0px;
 .header{
 
     &_logo{
@@ -27,7 +28,8 @@ header{
 }
 
 .sideNav{
-    background-color: rgb(54, 167, 54);
+    background: rgb(167,214,170);
+background: linear-gradient(180deg, rgba(167,214,170,1) 0%, rgba(248,255,167,1) 100%);
     width: 70px;
     height: 82vh;
     margin-top: 0px;
@@ -40,15 +42,16 @@ header{
         text-decoration: none;
         border-style: solid;
         border-color: black;
-        border-width: 2px;
+        border-width: 1px;
         background-size: auto 80%;
         background-repeat: no-repeat;
         background-position: center;
     }
 
     &_home:hover, &_network:hover{
-        background-color: rgb(53, 109, 53);
+        background-color: rgba(248,255,167,1);
         cursor:pointer;
+        background-size: auto 100%;
     }
 
     &_home {
@@ -62,11 +65,12 @@ header{
 }
 
 
-
+$footer_radius: 10;
 .footer {
     background-color: rgb(71, 71, 71);
     height: 50px;
     margin-top: -16px;
+    border-radius: 0px #{$footer_radius}px #{$footer_radius}px #{$footer_radius}px;
     p{
         color: rgb(197, 197, 197);
         font-size: smaller;
