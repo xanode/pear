@@ -1,6 +1,5 @@
-import ForceGraph from './force-graph-master/src/force-graph';
-
-const test = document.getElementsById('test')
+const div = document.getElementById('forced-graph-3d');
+const main_panel = document.getElementById('main_panel');
 var myData = {
     "nodes": [
         {
@@ -23,6 +22,13 @@ var myData = {
 }
 
 
-const myGraph = ForceGraph();
-myGraph(test)
-  .graphData(myData);
+var myGraph = ForceGraph3D();
+
+var height = main_panel.clientHeight*(2/3);
+var width = main_panel.clientWidth*(2/3);
+
+
+myGraph.width(width);
+myGraph.height(height);
+
+myGraph(div).graphData(myData);

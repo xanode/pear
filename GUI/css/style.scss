@@ -1,9 +1,20 @@
-header{
-    height: 60px;
+.parent {
+    display: grid;
+    grid-template-columns:70px 10fr;
+    grid-template-rows: 60px 10fr 50px;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    }
+    
+.header { grid-area: 1 / 1 / 2 / 3; }
+.sideNav { grid-area: 2 / 1 / 3 / 2; }
+.footer { grid-area: 3 / 1 / 4 / 3; }
+.main_panel { grid-area: 2 / 2 / 3 / 3; }
+
+    
+.header{
     background: #A7D6AA;
     border-radius: 15px 15px 15px 0px;
-.header{
-
     &_logo{
         position: absolute;
         left: 25px;
@@ -25,14 +36,13 @@ header{
         top: 10px;
     }
 }
-}
+
 
 .sideNav{
     background: rgb(167,214,170);
-background: linear-gradient(180deg, rgba(167,214,170,1) 0%, rgba(248,255,167,1) 100%);
+    background: linear-gradient(180deg, rgba(167,214,170,1) 0%, rgba(248,255,167,1) 100%);
     width: 70px;
     height: 82vh;
-    margin-top: 0px;
 
     &_home, &_network{
         position: relative;
@@ -46,12 +56,12 @@ background: linear-gradient(180deg, rgba(167,214,170,1) 0%, rgba(248,255,167,1) 
         background-size: auto 80%;
         background-repeat: no-repeat;
         background-position: center;
-    }
 
-    &_home:hover, &_network:hover{
-        background-color: rgba(248,255,167,1);
-        cursor:pointer;
-        background-size: auto 100%;
+        &:hover{
+            background-color: rgba(248,255,167,1);
+            cursor:pointer;
+            background-size: auto 100%;
+        }
     }
 
     &_home {
@@ -64,18 +74,23 @@ background: linear-gradient(180deg, rgba(167,214,170,1) 0%, rgba(248,255,167,1) 
 
 }
 
+#forced-graph-3d{
+    position: relative;
+    margin-left: 13%;
+    margin-top: 7%;
+}
+
 
 $footer_radius: 10;
 .footer {
     background-color: rgb(71, 71, 71);
-    height: 50px;
-    margin-top: -16px;
+    height: 100%;
     border-radius: 0px #{$footer_radius}px #{$footer_radius}px #{$footer_radius}px;
     p{
         color: rgb(197, 197, 197);
         font-size: smaller;
         text-align: center;
         position: relative;
-        top: 16px;
+        top: 5px;
     }
 }
