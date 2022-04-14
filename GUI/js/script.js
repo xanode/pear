@@ -32,3 +32,18 @@ myGraph.width(width);
 myGraph.height(height);
 
 myGraph(div).graphData(myData);
+
+
+
+function active_network(){
+  const subject_div = document.getElementById('forced-graph-3d');
+  const back_div = document.getElementById('tableau');
+  subject_div.classList.remove('inactive');
+  back_div.classList.add('inactive');
+}
+function active_home(){
+  const back_div = document.getElementById('forced-graph-3d');
+  const subject_div = document.getElementById('tableau');
+  subject_div.classList.remove('inactive');
+  back_div.classList.add('inactive');
+}

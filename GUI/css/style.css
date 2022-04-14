@@ -109,6 +109,10 @@
   margin-top: 7%;
 }
 
+.inactive {
+  display: none;
+}
+
 .footer {
   background-color: #474747;
   height: 100%;
