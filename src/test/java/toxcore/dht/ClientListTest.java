@@ -1,6 +1,7 @@
 package toxcore.dht;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -36,7 +37,7 @@ public class ClientListTest {
 
         Node node = generateIPv4Node();
 
-        assertEquals(clientList.add(node), true);
+        assertTrue(clientList.add(node));
     }
 
     @Test
@@ -47,10 +48,10 @@ public class ClientListTest {
         clientList.add(node);
 
         // Remove the key
-        assertEquals(clientList.remove(node), true);
+        assertTrue(clientList.remove(node));
 
         // Try to remove it again
-        assertEquals(clientList.remove(node), false);
+        assertFalse(clientList.remove(node));
     }
 
     @Test
@@ -64,7 +65,7 @@ public class ClientListTest {
         }
 
         // Try to add a new key
-        assertEquals(clientList.add(generateIPv4Node()), false);
+        assertFalse(clientList.add(generateIPv4Node()));
     }
 
     // ============================================================
