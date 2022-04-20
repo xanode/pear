@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class ClientList {
 
-    private final int size;
+    private final int maximumSize;
     private final Node baseNode;
     private ArrayList<Node> clientList;
 
     protected static final int CLIENT_LIST_SIZE = 32;
 
-    ClientList(final int size, final Node baseNode) {
-        this.size = size; // Should be set to 32
+    ClientList(final int maximumSize, final Node baseNode) {
+        this.maximumSize = maximumSize; // Should be set to 32
         this.baseNode = baseNode;
         this.clientList = new ArrayList<>();
     }
@@ -24,7 +24,7 @@ public class ClientList {
     protected boolean add(Node node) {
         // TODO: A node should be added only if it is closer than the farthest node in the list.
         // Check if list is full
-        if (this.clientList.size() >= this.size) {
+        if (this.clientList.size() >= this.maximumSize) {
             return false;
         }
         for (int i=0; i<this.clientList.size(); i++) {
@@ -52,6 +52,14 @@ public class ClientList {
      */
     protected int getSize() {
         return this.clientList.size();
+    }
+
+    /**
+     * Get the maximum size of the client list.
+     * @return The maximum size of the list.
+     */
+    protected int getMaximumSize() {
+        return this.maximumSize;
     }
 
     /**
