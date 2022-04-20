@@ -63,7 +63,7 @@ public class ClientListTest {
     }
 
     @Test
-    @DisplayName("Add a node in a full list")
+    @DisplayName("Add nodes to a full list")
     void testAddFullList() throws SodiumLibraryException, UnknownHostException {
         ClientList clientList = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
 
@@ -72,8 +72,9 @@ public class ClientListTest {
             clientList.add(generateIPv4Node());
         }
 
-        // Try to add a new key
+        // Try to add new nodes
         assertFalse(clientList.add(generateIPv4Node()));
+        assertFalse(clientList.add(generateIPv6Node()));
     }
 
     // ============================================================
