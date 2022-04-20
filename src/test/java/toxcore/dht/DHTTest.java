@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,7 @@ class DHTTest {
     @DisplayName("Instanciating a DHT")
     void testDHT() throws SodiumLibraryException {
         DHT dht = new DHT();
+        assertEquals(dht.getNetwork().dht, dht);
     }
 
     @Test
@@ -42,5 +44,6 @@ class DHTTest {
         byte[] decrypted = receiver.decrypt(sender.getPublicKey(), nonce, ciphertext);
         assertEquals(new String(plaintext), new String(decrypted));
     }
+
 
 }
