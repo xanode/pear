@@ -43,15 +43,23 @@ public class ClientListTest {
     }
 
     @Test
-    @DisplayName("Remove a node from a client list")
+    @DisplayName("Remove nodes from a client list")
     void testRemove() throws SodiumLibraryException, UnknownHostException {
         ClientList clientList = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
 
-        // Remove the key
-        assertTrue(clientList.remove(node));
+        // Generate nodes and add them
+        Node node4 = generateIPv4Node();
+        Node node6 = generateIPv4Node();
+        clientList.add(node4);
+        clientList.add(node6);
 
-        // Try to remove it again
-        assertFalse(clientList.remove(node));
+        // Remove nodes
+        assertTrue(clientList.remove(node4));
+        assertTrue(clientList.remove(node6));
+
+        // Try again
+        assertFalse(clientList.remove(node4));
+        assertFalse(clientList.remove(node6));
     }
 
     @Test
