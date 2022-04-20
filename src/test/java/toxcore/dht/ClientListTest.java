@@ -31,13 +31,15 @@ public class ClientListTest {
     }
 
     @Test
-    @DisplayName("Add a node in the client list")
+    @DisplayName("Add nodes in the client list")
     void testAdd() throws SodiumLibraryException, UnknownHostException {
         ClientList clientList = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
 
-        Node node = generateIPv4Node();
+        Node node4 = generateIPv4Node();
+        Node node6 = generateIPv6Node();
 
-        assertTrue(clientList.add(node));
+        assertTrue(clientList.add(node4));
+        assertTrue(clientList.add(node6));
     }
 
     @Test
