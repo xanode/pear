@@ -1,5 +1,6 @@
 package toxcore.dht;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,13 +22,15 @@ public class ClientListTest {
     @Test
     @DisplayName("Instanciate a ClientList with IPv4 node")
     void testClientListIPv4() throws SodiumLibraryException, UnknownHostException {
-        new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
+        ClientList list = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
+        assertEquals(list.getSize(), ClientList.CLIENT_LIST_SIZE);
     }
 
     @Test
     @DisplayName("Instanciate a ClientList with IPv6 node")
     void testClientListIPv6() throws SodiumLibraryException, UnknownHostException {
-        new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv6Node());
+        ClientList list = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv6Node());
+        assertEquals(list.getSize(), ClientList.CLIENT_LIST_SIZE);
     }
 
     @Test
