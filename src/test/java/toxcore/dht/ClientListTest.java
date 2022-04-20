@@ -23,14 +23,14 @@ public class ClientListTest {
     @DisplayName("Instanciate a ClientList with IPv4 node")
     void testClientListIPv4() throws SodiumLibraryException, UnknownHostException {
         ClientList list = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
-        assertEquals(list.getSize(), ClientList.CLIENT_LIST_SIZE);
+        assertEquals(list.getMaximumSize(), ClientList.CLIENT_LIST_SIZE);
     }
 
     @Test
     @DisplayName("Instanciate a ClientList with IPv6 node")
     void testClientListIPv6() throws SodiumLibraryException, UnknownHostException {
         ClientList list = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv6Node());
-        assertEquals(list.getSize(), ClientList.CLIENT_LIST_SIZE);
+        assertEquals(list.getMaximumSize(), ClientList.CLIENT_LIST_SIZE);
     }
 
     @Test
