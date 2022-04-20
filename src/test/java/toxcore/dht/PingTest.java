@@ -1,6 +1,8 @@
 package toxcore.dht;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -37,6 +39,59 @@ class PingTest {
 
         assertEquals(ping.getNode(), node);
         assertEquals(ping.getPingId(), pingId);
+    }
+
+    @Test
+    @DisplayName("Equals method: same object")
+    void testEqualsSameObject() throws SodiumLibraryException, UnknownHostException {
+        Node node = generateIPv4Node();
+        byte[] pingId = generateRandomId();
+        Ping ping = new Ping(node, pingId);
+
+        assertTrue(ping.equals(ping));
+    }
+
+    @Test
+    @DisplayName("Equals method: same node and ping id")
+    void testEqualsSameNodeAndId() throws SodiumLibraryException, UnknownHostException {
+        Node node = generateIPv4Node();
+        byte[] pingId = generateRandomId();
+
+        Ping ping1 = new Ping(node, pingId);
+        Ping ping2 = new Ping(node, pingId);
+
+        assertTrue(ping1.equals(ping2));
+    }
+
+    @Test
+    @DisplayName("Equals method: same node, different ping id")
+    void testEqualsSameNodeDifferentPingId() throws SodiumLibraryException, UnknownHostException {
+        Node node = generateIPv4Node();
+
+        Ping ping1 = new Ping(node, generateRandomId());
+        Ping ping2 = new Ping(node, generateRandomId());
+
+        assertFalse(ping1.equals(ping2));
+    }
+
+    @Test
+    @DisplayName("Equals method: different node, same ping id")
+    void testEqualsDifferentNodeSamePingId() throws SodiumLibraryException, UnknownHostException {
+        byte[] pingId = generateRandomId();
+
+        Ping ping1 = new Ping(generateIPv4Node(), pingId);
+        Ping ping2 = new Ping(generateIPv4Node(), pingId);
+
+        assertFalse(ping1.equals(ping2));
+    }
+
+    @Test
+    @DisplayName("Equals method: different node, different ping id")
+    void testEqualsDifferentNodeDifferentPingId() throws SodiumLibraryException, UnknownHostException {
+        Ping ping1 = new Ping(generateIPv4Node(), generateRandomId());
+        Ping ping2 = new Ping(generateIPv4Node(), generateRandomId());
+
+        assertFalse(ping1.equals(ping2));
     }
 
     // ============================================================
