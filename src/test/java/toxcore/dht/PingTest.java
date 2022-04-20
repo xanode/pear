@@ -28,6 +28,17 @@ class PingTest {
         assertEquals(ping.getPingId(), pingId);
     }
 
+    @Test
+    @DisplayName("Instanciate a Ping with IPv6 addresses")
+    void testPingIPv6() throws SodiumLibraryException, UnknownHostException {
+        Node node = generateIPv6Node();
+        byte[] pingId = generateRandomId();
+        Ping ping = new Ping(node, pingId);
+
+        assertEquals(ping.getNode(), node);
+        assertEquals(ping.getPingId(), pingId);
+    }
+
     // ============================================================
     // HELPERS
     // ============================================================
@@ -37,6 +48,22 @@ class PingTest {
 
         rd.nextBytes(randomInetAddress);
         randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address
+
+        node = new Node(
+                new DHT(), // Necessary to initialize the Sodium library
+                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                InetAddress.getByAddress(randomInetAddress),
+                rd.nextInt(65536));
+
+        return node;
+    }
+
+    Node generateIPv6Node() throws SodiumLibraryException, UnknownHostException {
+        byte[] randomInetAddress = new byte[Network.SIZE_IP6];
+        Node node = null;
+
+        rd.nextBytes(randomInetAddress);
+        randomInetAddress[0] = (byte) (rd.nextInt(240) + 1); // Force the address not to be a multicast address
 
         node = new Node(
                 new DHT(), // Necessary to initialize the Sodium library
