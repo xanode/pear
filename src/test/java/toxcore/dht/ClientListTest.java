@@ -21,19 +21,19 @@ public class ClientListTest {
     @Test
     @DisplayName("Instanciate a ClientList with IPv4 node")
     void testClientListIPv4() throws SodiumLibraryException, UnknownHostException {
-        new ClientList(32, generateIPv4Node());
+        new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
     }
 
     @Test
     @DisplayName("Instanciate a ClientList with IPv6 node")
     void testClientListIPv6() throws SodiumLibraryException, UnknownHostException {
-        new ClientList(32, generateIPv6Node());
+        new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv6Node());
     }
 
     @Test
     @DisplayName("Add a node in the client list")
     void testAdd() throws SodiumLibraryException, UnknownHostException {
-        ClientList clientList = new ClientList(32, generateIPv4Node());
+        ClientList clientList = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
 
         Node node = generateIPv4Node();
 
@@ -43,9 +43,7 @@ public class ClientListTest {
     @Test
     @DisplayName("Remove a node from a client list")
     void testRemove() throws SodiumLibraryException, UnknownHostException {
-        ClientList clientList = new ClientList(32, generateIPv4Node());
-        Node node = generateIPv4Node();
-        clientList.add(node);
+        ClientList clientList = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
 
         // Remove the key
         assertTrue(clientList.remove(node));
@@ -57,10 +55,10 @@ public class ClientListTest {
     @Test
     @DisplayName("Add a node in a full list")
     void testAddFullList() throws SodiumLibraryException, UnknownHostException {
-        ClientList clientList = new ClientList(32, generateIPv4Node());
+        ClientList clientList = new ClientList(ClientList.CLIENT_LIST_SIZE, generateIPv4Node());
 
         // Fill the list
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < ClientList.CLIENT_LIST_SIZE; i++) {
             clientList.add(generateIPv4Node());
         }
 
