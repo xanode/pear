@@ -8,6 +8,8 @@ public class ClientList {
     private final Node baseNode;
     private ArrayList<Node> clientList;
 
+    protected static final int CLIENT_LIST_SIZE = 32;
+
     ClientList(final int size, final Node baseNode) {
         this.size = size; // Should be set to 32
         this.baseNode = baseNode;
