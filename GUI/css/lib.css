@@ -1,0 +1,95 @@
+.checkbox
+{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.knobs
+{
+    z-index: 2;
+}
+
+.layer
+{
+    width: 100%;
+    background-color: #c5f8a2;
+    transition: 0.3s ease all;
+    z-index: 1;
+}
+
+.button
+{
+    position: relative;
+    top: 20px;
+    left: 20px;
+    width: 74px;
+    height: 36px;
+    overflow: hidden;
+    border-radius: 100px;
+    background-color: #c5f8a2;
+}
+
+#toggle-3d .knobs:before, #toggle-3d .knobs:after, #toggle-3d .knobs span
+{
+    position: absolute;
+    top: 4px;
+    width: 20px;
+    height: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    padding: 9px 4px;
+    border-radius: 50%;
+    transition: 0.3s ease all;
+}
+
+#toggle-3d .knobs:before
+{
+    content: 'ON';
+    color: rgb(255, 255, 255);
+    left: 4px;
+}
+
+#toggle-3d .knobs:after
+{
+    content: 'OFF';
+    left: 42px;
+    color: #fff;
+    background-color: #f44336;
+    opacity: 0;
+}
+
+#toggle-3d .knobs:before, #toggle-3d .knobs:after
+{
+    z-index: 2;
+}
+
+#toggle-3d .knobs span
+{
+    left: 4px;
+    background-color: #07f403;
+    z-index: 1;
+}
+
+#toggle-3d .checkbox:checked + .knobs:before
+{
+    opacity: 0;
+}
+
+#toggle-3d .checkbox:checked + .knobs:after
+{
+    opacity: 1;
+}
+
+#toggle-3d .checkbox:checked + .knobs span
+{
+    background-color: #f48888;
+    transform: scale(4);
+}

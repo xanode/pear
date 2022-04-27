@@ -8,7 +8,10 @@
     <title>Pear</title>
     <link rel="shortcut icon" type="image/ico" href="./assets/favicon.ico" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/lib.css">
     <script src="js/forced-graph-3d.js"></script>
+    <!--<script defer src="js/forced-graph-2d.js"></script>-->
+    <script src="https://unpkg.com/force-graph"></script>
 </head>
 
 <body>
@@ -25,11 +28,20 @@
             <p>Made for Pear project</p>
         </div>
         <div class="main_panel" id="main_panel">
+            <div class="button inactive" id="toggle-3d" onclick="toggle_2d()">
+                <input type="checkbox" class="checkbox">
+                <div class="knobs">
+                    <span></span>
+                </div>
+                <div class="layer"></div>
+            </div>
             <div id="forced-graph-3d" class="inactive"></div>
+            <div id="forced-graph-2d" class="inactive"></div>
             <div id="tableau" class="inactive"></div>
         </div>
     </div>
     <script defer src="./js/script.js"></script>
+    <script defer src="./js/graph_loader.js"></script>
 </body>
 
 </html>

@@ -1,49 +1,33 @@
-const div = document.getElementById('forced-graph-3d');
-const main_panel = document.getElementById('main_panel');
-var myData = {
-    "nodes": [
-        {
-          "id": "id1",
-          "name": "name1",
-          "val": 1
-        },
-        {
-          "id": "id2",
-          "name": "name2",
-          "val": 10
-        }
-    ],
-    "links": [
-        {
-            "source": "id1",
-            "target": "id2"
-        }
-    ]
-}
-
-
-var myGraph = ForceGraph3D();
-
-var height = main_panel.clientHeight*(2/3);
-var width = main_panel.clientWidth*(2/3);
-
-
-myGraph.width(width);
-myGraph.height(height);
-
-myGraph(div).graphData(myData);
-
-
+//sideNav buttons
+const graph_3d = document.getElementById('forced-graph-3d');
+const graph_2d = document.getElementById('forced-graph-2d');
+const tableau = document.getElementById('tableau');
+const toggle_3d = document.getElementById('toggle-3d');
 
 function active_network(){
-  const subject_div = document.getElementById('forced-graph-3d');
-  const back_div = document.getElementById('tableau');
-  subject_div.classList.remove('inactive');
-  back_div.classList.add('inactive');
+  toggle_3d.classList.remove('inactive');
+  graph_3d.classList.remove('inactive');
+  tableau.classList.add('inactive');
 }
 function active_home(){
-  const back_div = document.getElementById('forced-graph-3d');
-  const subject_div = document.getElementById('tableau');
-  subject_div.classList.remove('inactive');
-  back_div.classList.add('inactive');
+  toggle_3d.classList.remove('inactive');
+  graph_3d.classList.add('inactive');
+  graph_2d.classList.add('inactive');
+  tableau.classList.remove('inactive');
+}
+
+
+
+//toggle 2d to 3d
+var active_2d = false;
+function toggle_2d() {
+  if (! active_2d){
+    graph_3d.classList.add('inactive');
+    graph_2d.classList.remove('inactive');
+    active_2d = true;
+  } else {
+    graph_2d.classList.add('inactive');
+    graph_3d.classList.remove('inactive');
+    active_2d = false;
+  }
 }
