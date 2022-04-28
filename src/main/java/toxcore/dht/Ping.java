@@ -131,8 +131,16 @@ public class Ping implements IPCCallback {
      */
     public void execute() throws SodiumLibraryException {
         // Send a ping request to the node
-        Network network = this.node.getDHT().getNetwork();
-        network.sendPacket(Network.PACKET_PING_REQUEST_TYPE, this.getPingRequestPayload(), this.node, this);
+        new Thread(() -> {
+            try {
+                this.node
+                        .getDHT()
+                        .getNetwork()
+                        .sendPacket(Network.PACKET_PING_REQUEST_TYPE, this.getPingRequestPayload(), this.node, this);
+            } catch (SodiumLibraryException e) {
+                e.printStackTrace();
+            }
+        }).start();
         this.sentDate = new Date(); // Set the sent date
         while (!isReceived()) {
             // TODO: handle timeout

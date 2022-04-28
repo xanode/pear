@@ -49,22 +49,23 @@ public class Network {
             DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
             try {
                 this.pingSocket.receive(receivedPacket);
-                // Decode packet
-                byte[] identifier = ByteBuffer.allocate(receivedPacket.getAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
-                        .put(receivedPacket.getAddress().getAddress())
-                        .putShort((short) receivedPacket.getPort())
-                        .put(receivedPacket.getData(), 0, PACKET_TYPE_LENGTH)
-                        .array();
-                // Get IPC callback if it exists
-                IPCCallback callback = ipcCallbacks.get(identifier);
-                if (callback != null) { // It is a response
-                    // Call callback
-                    callback.onCallback();
-                    // Remove callback
-                    ipcCallbacks.remove(identifier);
-                }
-                // TODO: If it is not a response, we should answer to the request, or it won't ever work
-                // TODO: Handle this in a thread
+                new Thread(() -> {
+                    // Decode packet
+                    byte[] identifier = ByteBuffer.allocate(receivedPacket.getAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
+                            .put(receivedPacket.getAddress().getAddress())
+                            .putShort((short) receivedPacket.getPort())
+                            .put(receivedPacket.getData(), 0, PACKET_TYPE_LENGTH)
+                            .array();
+                    // Get IPC callback if it exists
+                    IPCCallback callback = ipcCallbacks.get(identifier);
+                    if (callback != null) { // It is a response
+                        // Call callback
+                        callback.onCallback();
+                        // Remove callback
+                        ipcCallbacks.remove(identifier);
+                    }
+                    // TODO: If it is not a response, we should answer to the request, or it won't ever work
+                }).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
