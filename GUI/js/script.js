@@ -10,7 +10,7 @@ function active_network(){
   tableau.classList.add('inactive');
 }
 function active_home(){
-  toggle_3d.classList.remove('inactive');
+  toggle_3d.classList.add('inactive');
   graph_3d.classList.add('inactive');
   graph_2d.classList.add('inactive');
   tableau.classList.remove('inactive');
@@ -31,3 +31,5 @@ function toggle_2d() {
     active_2d = false;
   }
 }
+
+

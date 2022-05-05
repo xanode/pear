@@ -39,3 +39,12 @@ var myGraph_2d = ForceGraph()(div_2d)
 .width(width)
 .height(height)
 .graphData(myData);
+
+
+//load table
+nodes = myData["nodes"];
+console.log(nodes);
+nodes.forEach(node => {
+  const text = document.getElementById("nodes");
+  text.innerHTML = text.textContent + " "+node["name"];
+});
