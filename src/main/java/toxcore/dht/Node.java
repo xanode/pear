@@ -1,13 +1,12 @@
 package toxcore.dht;
 
-import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
-
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.concurrent.TimeoutException;
+
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
 public class Node {
 

@@ -1,11 +1,11 @@
 package toxcore.dht;
 
+import java.net.InetAddress;
+
 import com.muquit.libsodiumjna.SodiumKeyPair;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
-
-import java.net.InetAddress;
 
 public class DHT {
 

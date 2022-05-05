@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.lang.IllegalArgumentException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
 
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -44,11 +44,11 @@ public class NodeTest {
     public void testConstructorWithMulticastAddress() {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
-        Node node = null;
+
         try {
             rd.nextBytes(randomInetAddress);
             randomInetAddress[0] = (byte) 224; // Force the address to be a multicast address (RFC 5771)
-            node = new Node(
+            new Node(
                     new DHT(), // Necessary to initialize the Sodium library
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
