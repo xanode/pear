@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 public class NodeTest {
 
     @Test
-    @DisplayName("Test Node constructor with IPv6 address (non-multicast)")
+    @DisplayName("Test Node constructor with IPv4 address (non-multicast)")
     public void testConstructorWithIPv4Address() {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
