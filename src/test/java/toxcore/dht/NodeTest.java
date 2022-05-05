@@ -17,11 +17,9 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Test Node class")
 public class NodeTest {
 
-    // TODO: Test with IPv6 addresses !
-
     @Test
-    @DisplayName("Test Node constructor without (IPv4) multicast address")
-    public void testConstructorWithoutMulticastAddress() {
+    @DisplayName("Test Node constructor with IPv6 address (non-multicast)")
+    public void testConstructorWithIPv4Address() {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
         Node node = null;
@@ -40,8 +38,8 @@ public class NodeTest {
     }
 
     @Test
-    @DisplayName("Test Node constructor with (IPv4) multicast address")
-    public void testConstructorWithMulticastAddress() {
+    @DisplayName("Test Node constructor with IPv4 multicast address")
+    public void testConstructorWithMulticastIPv4Address() {
         byte[] randomInetAddress = new byte[4];
         Random rd = new Random();
 
@@ -52,8 +50,47 @@ public class NodeTest {
                     new DHT(), // Necessary to initialize the Sodium library
                     SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                     InetAddress.getByAddress(randomInetAddress),
-                    rd.nextInt(65536)
-            );
+                    rd.nextInt(65536));
+        } catch (SodiumLibraryException | UnknownHostException ignored) {
+        } catch (IllegalArgumentException e) {
+            // This is expected
+            assertEquals(e.getMessage(), "Multicast address not allowed");
+        }
+    }
+
+    @Test
+    @DisplayName("Test Node constructor with IPv6 address (non-multicast)")
+    public void testConstructorWithIPv6Address() {
+        byte[] randomInetAddress = new byte[16];
+        Random rd = new Random();
+        Node node = null;
+        try {
+            rd.nextBytes(randomInetAddress);
+            node = new Node(
+                    new DHT(), // Necessary to initialize the Sodium library
+                    SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                    InetAddress.getByAddress(randomInetAddress),
+                    rd.nextInt(65536));
+        } catch (SodiumLibraryException | UnknownHostException ignored) {
+        }
+        assertNotNull(node);
+    }
+
+    @Test
+    @DisplayName("Test Node constructor with IPv6 multicast address")
+    public void testConstructorWithMulticastIPv6Address() {
+        byte[] randomInetAddress = new byte[16];
+        Random rd = new Random();
+
+        try {
+            rd.nextBytes(randomInetAddress);
+            randomInetAddress[0] = (byte) (rd.nextInt(240) + 15); // Force the address to be a multicast address (RFC
+                                                                  // 5771)
+            new Node(
+                    new DHT(), // Necessary to initialize the Sodium library
+                    SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                    InetAddress.getByAddress(randomInetAddress),
+                    rd.nextInt(65536));
         } catch (SodiumLibraryException | UnknownHostException ignored) {
         } catch (IllegalArgumentException e) {
             // This is expected
