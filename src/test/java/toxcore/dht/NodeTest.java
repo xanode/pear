@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("Test Node class")
 public class NodeTest {
+    Random rd = new Random();
 
     @Test
     @DisplayName("Test Node constructor with IPv4 address (non-multicast)")
     public void testConstructorWithIPv4Address() {
         byte[] randomInetAddress = new byte[4];
-        Random rd = new Random();
         Node node = null;
         try {
             rd.nextBytes(randomInetAddress);
@@ -41,7 +41,6 @@ public class NodeTest {
     @DisplayName("Test Node constructor with IPv4 multicast address")
     public void testConstructorWithMulticastIPv4Address() {
         byte[] randomInetAddress = new byte[4];
-        Random rd = new Random();
 
         try {
             rd.nextBytes(randomInetAddress);
@@ -62,7 +61,6 @@ public class NodeTest {
     @DisplayName("Test Node constructor with IPv6 address (non-multicast)")
     public void testConstructorWithIPv6Address() {
         byte[] randomInetAddress = new byte[16];
-        Random rd = new Random();
         Node node = null;
         try {
             rd.nextBytes(randomInetAddress);
@@ -80,7 +78,6 @@ public class NodeTest {
     @DisplayName("Test Node constructor with IPv6 multicast address")
     public void testConstructorWithMulticastIPv6Address() {
         byte[] randomInetAddress = new byte[16];
-        Random rd = new Random();
 
         try {
             rd.nextBytes(randomInetAddress);
@@ -102,7 +99,7 @@ public class NodeTest {
     @DisplayName("Test Node equals")
     public void testEquals() {
         byte[] randomInetAddress = new byte[4];
-        Random rd = new Random();
+
         // Generate two identical nodes
         Node node1 = null;
         Node node2 = null;
@@ -137,7 +134,7 @@ public class NodeTest {
     @DisplayName("Test Node hashCode")
     public void testHashCode() {
         byte[] randomInetAddress = new byte[4];
-        Random rd = new Random();
+
         Node node1 = null;
         Node node2 = null;
         try {
