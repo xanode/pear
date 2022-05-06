@@ -106,7 +106,7 @@ public class NodeTest {
     }
 
     @Test
-    @DisplayName("Equals method: different object with same parameters")
+    @DisplayName("Equals method: different objects with same parameters")
     public void testEqualsDifferentNodesSameParameters() throws SodiumLibraryException, UnknownHostException {
         byte[] randomInetAddress = new byte[4];
 
