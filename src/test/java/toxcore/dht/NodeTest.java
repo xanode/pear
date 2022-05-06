@@ -3,6 +3,7 @@ package toxcore.dht;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -90,31 +91,18 @@ public class NodeTest {
     }
 
     @Test
-    @DisplayName("Test Node equals")
-    public void testEquals() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-
-        // Generate random values
-        byte[] publicKey = SodiumLibrary.cryptoBoxKeyPair().getPublicKey();
+    @DisplayName("Equals method: same node object")
+    public void testEqualsSameNode() throws SodiumLibraryException, UnknownHostException {
+        byte[] randomInetAddress = new byte[4]; // TODO: test with IPv6 addresses too if necessary
         rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        int port = rd.nextInt(65536);
-        DHT dht = new DHT(); // Necessary to initialize the Sodium library
-        Node node1 = new Node(
-                dht,
-                publicKey,
-                InetAddress.getByAddress(randomInetAddress),
-                port);
-        Node node2 = new Node(
-                dht,
-                publicKey,
-                InetAddress.getByAddress(randomInetAddress),
-                port);
 
-        // A node is equal to itself
-        assertEquals(node1, node1);
-        // Two identical nodes are equal
-        assertEquals(node1, node2);
+        Node node = new Node(
+                new DHT(), // Necessary to initialize the Sodium library
+                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                InetAddress.getByAddress(randomInetAddress),
+                rd.nextInt(65536));
+
+        assertTrue(node.equals(node));
     }
 
     @Test
