@@ -21,34 +21,17 @@ public class NodeTest {
     Random rd = new Random();
 
     @Test
-    @DisplayName("Instanciate a Node with IPv4 address (non-multicast)")
+    @DisplayName("Instanciate a Node with IPv4 non-multicast address")
     public void testConstructorWithIPv4Address() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-
-        Node node = new Node(
-                new DHT(), // Necessary to initialize the Sodium library
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
-
+        Node node = generateIPv4Node("non-multicast");
         assertNotNull(node);
     }
 
     @Test
     @DisplayName("Instanciate a Node with IPv4 multicast address")
     public void testConstructorWithMulticastIPv4Address() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) 224; // Force the address to be multicast (RFC 5771)
-
         try {
-            new Node(
-                    new DHT(), // Necessary to initialize the Sodium library
-                    SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                    InetAddress.getByAddress(randomInetAddress),
-                    rd.nextInt(65536));
+            generateIPv4Node("multicast");
         } catch (IllegalArgumentException e) {
             // This is expected
             assertEquals(e.getMessage(), "Multicast address not allowed");
@@ -94,14 +77,7 @@ public class NodeTest {
     @Test
     @DisplayName("Equals method: same node object")
     public void testEqualsSameNode() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-        rd.nextBytes(randomInetAddress);
-
-        Node node = new Node(
-                new DHT(), // Necessary to initialize the Sodium library
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
+        Node node = generateIPv4Node("non-multicast");
 
         assertTrue(node.equals(node));
     }
@@ -136,23 +112,8 @@ public class NodeTest {
     @Test
     @DisplayName("Equals method: different objects with different parameters")
     public void testEqualsDifferentNodes() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        Node node1 = new Node(
-                new DHT(),
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
-
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        Node node2 = new Node(
-                new DHT(),
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
+        Node node1 = generateIPv4Node("non-multicast");
+        Node node2 = generateIPv4Node("non-multicast");
 
         assertFalse(node1.equals(node2));
     }
@@ -160,15 +121,7 @@ public class NodeTest {
     @Test
     @DisplayName("hashCode method: same node")
     public void testHashCodeSameNode() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-
-        Node node = new Node(
-                new DHT(), // Necessary to initialize the Sodium library
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
+        Node node = generateIPv4Node("non-multicast");
 
         assertEquals(node.hashCode(), node.hashCode());
     }
@@ -203,24 +156,31 @@ public class NodeTest {
     @Test
     @DisplayName("hashCode method: different nodes with different parameters")
     public void testHashCodeDifferentNodes() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4];
-
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        Node node1 = new Node(
-                new DHT(),
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
-
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        Node node2 = new Node(
-                new DHT(),
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
+        Node node1 = generateIPv4Node("non-multicast");
+        Node node2 = generateIPv4Node("non-multicast");
 
         assertNotEquals(node1.hashCode(), node2.hashCode());
+    }
+
+    // ============================
+    // Helper methods
+    // ============================
+    public Node generateIPv4Node(String addressType) throws SodiumLibraryException, UnknownHostException {
+        byte[] randomInetAddress = new byte[4];
+        rd.nextBytes(randomInetAddress);
+
+        if (addressType == "multicast") {
+            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1);
+        } else if (addressType == "non-multicast") {
+            randomInetAddress[0] = (byte) (rd.nextInt(240) + 1);
+        }
+
+        Node node = new Node(
+                new DHT(),
+                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                InetAddress.getByAddress(randomInetAddress),
+                rd.nextInt(65536));
+
+        return node;
     }
 }
