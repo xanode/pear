@@ -1,6 +1,7 @@
 package toxcore.dht;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -130,6 +131,30 @@ public class NodeTest {
                 port);
 
         assertTrue(node1.equals(node2));
+    }
+
+    @Test
+    @DisplayName("Equals method: different objects with different parameters")
+    public void testEqualsDifferentNodes() throws SodiumLibraryException, UnknownHostException {
+        byte[] randomInetAddress = new byte[4];
+
+        rd.nextBytes(randomInetAddress);
+        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
+        Node node1 = new Node(
+                new DHT(),
+                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                InetAddress.getByAddress(randomInetAddress),
+                rd.nextInt(65536));
+
+        rd.nextBytes(randomInetAddress);
+        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
+        Node node2 = new Node(
+                new DHT(),
+                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
+                InetAddress.getByAddress(randomInetAddress),
+                rd.nextInt(65536));
+
+        assertFalse(node1.equals(node2));
     }
 
     @Test
