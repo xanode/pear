@@ -2,7 +2,6 @@ package toxcore.dht;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -158,29 +157,18 @@ public class NodeTest {
     }
 
     @Test
-    @DisplayName("Test Node hashCode")
-    public void testHashCode() throws SodiumLibraryException, UnknownHostException {
+    @DisplayName("hashCode method: same node")
+    public void testHashCodeSameNode() throws SodiumLibraryException, UnknownHostException {
         byte[] randomInetAddress = new byte[4];
-
         rd.nextBytes(randomInetAddress);
         randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        Node node1 = new Node(
+
+        Node node = new Node(
                 new DHT(), // Necessary to initialize the Sodium library
                 SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                 InetAddress.getByAddress(randomInetAddress),
                 rd.nextInt(65536));
 
-        rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        Node node2 = new Node(
-                new DHT(), // Necessary to initialize the Sodium library
-                SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
-                InetAddress.getByAddress(randomInetAddress),
-                rd.nextInt(65536));
-
-        // The hashCode of a node stay the same
-        assertEquals(node1.hashCode(), node1.hashCode());
-        // Two different nodes have different hashCodes
-        assertNotEquals(node1.hashCode(), node2.hashCode());
+        assertEquals(node.hashCode(), node.hashCode());
     }
 }
