@@ -94,7 +94,7 @@ public class NodeTest {
     @Test
     @DisplayName("Equals method: same node object")
     public void testEqualsSameNode() throws SodiumLibraryException, UnknownHostException {
-        byte[] randomInetAddress = new byte[4]; // TODO: test with IPv6 addresses too if necessary
+        byte[] randomInetAddress = new byte[4];
         rd.nextBytes(randomInetAddress);
 
         Node node = new Node(
