@@ -106,6 +106,33 @@ public class NodeTest {
     }
 
     @Test
+    @DisplayName("Equals method: different object with same parameters")
+    public void testEqualsDifferentNodesSameParameters() throws SodiumLibraryException, UnknownHostException {
+        byte[] randomInetAddress = new byte[4];
+
+        // Generate random values
+        byte[] publicKey = SodiumLibrary.cryptoBoxKeyPair().getPublicKey();
+        rd.nextBytes(randomInetAddress);
+        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
+        int port = rd.nextInt(65536);
+        DHT dht = new DHT(); // Necessary to initialize the Sodium library
+
+        Node node1 = new Node(
+                dht,
+                publicKey,
+                InetAddress.getByAddress(randomInetAddress),
+                port);
+
+        Node node2 = new Node(
+                dht,
+                publicKey,
+                InetAddress.getByAddress(randomInetAddress),
+                port);
+
+        assertTrue(node1.equals(node2));
+    }
+
+    @Test
     @DisplayName("Test Node hashCode")
     public void testHashCode() throws SodiumLibraryException, UnknownHostException {
         byte[] randomInetAddress = new byte[4];
