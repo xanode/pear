@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Objects;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +19,7 @@ public class NodeTest {
     @Test
     @DisplayName("Instanciate a Node with IPv4 non-multicast address")
     public void testConstructorWithIPv4Address() throws SodiumLibraryException, UnknownHostException {
-        Node node = generateIPv4Node("non-multicast");
+        Node node = generateIPv4Node(false);
         assertNotNull(node);
     }
 
@@ -28,7 +27,7 @@ public class NodeTest {
     @DisplayName("Instanciate a Node with IPv4 multicast address")
     public void testConstructorWithMulticastIPv4Address() throws SodiumLibraryException, UnknownHostException {
         try {
-            generateIPv4Node("multicast");
+            generateIPv4Node(true);
         } catch (IllegalArgumentException e) {
             // This is expected
             assertEquals(e.getMessage(), "Multicast address not allowed");
@@ -74,7 +73,7 @@ public class NodeTest {
     @Test
     @DisplayName("Equals method: same node object")
     public void testEqualsSameNode() throws SodiumLibraryException, UnknownHostException {
-        Node node = generateIPv4Node("non-multicast");
+        Node node = generateIPv4Node(false);
 
         assertEquals(node, node);
     }
@@ -109,8 +108,8 @@ public class NodeTest {
     @Test
     @DisplayName("Equals method: different objects with different parameters")
     public void testEqualsDifferentNodes() throws SodiumLibraryException, UnknownHostException {
-        Node node1 = generateIPv4Node("non-multicast");
-        Node node2 = generateIPv4Node("non-multicast");
+        Node node1 = generateIPv4Node(false);
+        Node node2 = generateIPv4Node(false);
 
         assertNotEquals(node1, node2);
     }
@@ -118,7 +117,7 @@ public class NodeTest {
     @Test
     @DisplayName("hashCode method: same node")
     public void testHashCodeSameNode() throws SodiumLibraryException, UnknownHostException {
-        Node node = generateIPv4Node("non-multicast");
+        Node node = generateIPv4Node(false);
 
         assertEquals(node.hashCode(), node.hashCode());
     }
@@ -153,27 +152,27 @@ public class NodeTest {
     @Test
     @DisplayName("hashCode method: different nodes with different parameters")
     public void testHashCodeDifferentNodes() throws SodiumLibraryException, UnknownHostException {
-        Node node1 = generateIPv4Node("non-multicast");
-        Node node2 = generateIPv4Node("non-multicast");
+        Node node1 = generateIPv4Node(false);
+        Node node2 = generateIPv4Node(false);
 
         assertNotEquals(node1.hashCode(), node2.hashCode());
     }
 
     /**
      * Generates a random IPv4 node.
-     * @param addressType The address type.
+     * @param isMulticastAddress True if the address is a multicast address, false otherwise.
      * @return a random IPv4 node
      * @throws SodiumLibraryException if the Sodium library is not initialized
      * @throws UnknownHostException if the random address is not valid
      */
-    public static Node generateIPv4Node(String addressType) throws SodiumLibraryException, UnknownHostException {
+    public static Node generateIPv4Node(boolean isMulticastAddress) throws SodiumLibraryException, UnknownHostException {
         Random rd = new Random();
         byte[] randomInetAddress = new byte[4];
         rd.nextBytes(randomInetAddress);
 
-        if (Objects.equals(addressType, "multicast")) {
-            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1);
-        } else if (Objects.equals(addressType, "non-multicast")) {
+        if (isMulticastAddress) {
+            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
+        } else {
             randomInetAddress[0] = (byte) (rd.nextInt(240) + 1);
         }
 
