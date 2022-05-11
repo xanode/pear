@@ -1,20 +1,16 @@
 package toxcore.dht;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.muquit.libsodiumjna.SodiumLibrary;
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Objects;
 import java.util.Random;
 
-import com.muquit.libsodiumjna.SodiumLibrary;
-import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Test Node class")
 public class NodeTest {
@@ -79,7 +75,7 @@ public class NodeTest {
     public void testEqualsSameNode() throws SodiumLibraryException, UnknownHostException {
         Node node = generateIPv4Node("non-multicast");
 
-        assertTrue(node.equals(node));
+        assertEquals(node, node);
     }
 
     @Test
@@ -106,7 +102,7 @@ public class NodeTest {
                 InetAddress.getByAddress(randomInetAddress),
                 port);
 
-        assertTrue(node1.equals(node2));
+        assertEquals(node1, node2);
     }
 
     @Test
@@ -115,7 +111,7 @@ public class NodeTest {
         Node node1 = generateIPv4Node("non-multicast");
         Node node2 = generateIPv4Node("non-multicast");
 
-        assertFalse(node1.equals(node2));
+        assertNotEquals(node1, node2);
     }
 
     @Test
@@ -162,25 +158,27 @@ public class NodeTest {
         assertNotEquals(node1.hashCode(), node2.hashCode());
     }
 
-    // ============================
-    // Helper methods
-    // ============================
+    /**
+     * Generates a random IPv4 node.
+     * @param addressType The address type.
+     * @return a random IPv4 node
+     * @throws SodiumLibraryException if the Sodium library is not initialized
+     * @throws UnknownHostException if the random address is not valid
+     */
     public Node generateIPv4Node(String addressType) throws SodiumLibraryException, UnknownHostException {
         byte[] randomInetAddress = new byte[4];
         rd.nextBytes(randomInetAddress);
 
-        if (addressType == "multicast") {
+        if (Objects.equals(addressType, "multicast")) {
             randomInetAddress[0] = (byte) (rd.nextInt(224) + 1);
-        } else if (addressType == "non-multicast") {
+        } else if (Objects.equals(addressType, "non-multicast")) {
             randomInetAddress[0] = (byte) (rd.nextInt(240) + 1);
         }
 
-        Node node = new Node(
+        return new Node(
                 new DHT(),
                 SodiumLibrary.cryptoBoxKeyPair().getPublicKey(),
                 InetAddress.getByAddress(randomInetAddress),
                 rd.nextInt(65536));
-
-        return node;
     }
 }
