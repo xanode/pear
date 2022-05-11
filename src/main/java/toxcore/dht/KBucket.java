@@ -45,6 +45,14 @@ public class KBucket {
     }
 
     /**
+     * Get k-length of the KBucket.
+     * @return The k-length of the KBucket.
+     */
+    protected int getK() {
+        return this.k;
+    }
+
+    /**
      * Return the ArrayList to be able to iterate over the KBucket.
      * @return The ArrayList of the KBucket.
      */
