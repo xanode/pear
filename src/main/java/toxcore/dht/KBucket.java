@@ -51,4 +51,18 @@ public class KBucket {
     protected ArrayList<Node> toArrayList() {
         return this.bucket;
     }
+
+    /**
+     * Returns if the node is in the KBucket.
+     * @param node The node to check.
+     * @return True if the node is in the KBucket, false otherwise.
+     */
+    protected Node contains(Node node) {
+        for (Node n : this.bucket) {
+            if (n.equals(node)) {
+                return n;
+            }
+        }
+        return null;
+    }
 }

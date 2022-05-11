@@ -102,4 +102,25 @@ public class DHT {
         return SodiumLibrary.cryptoBoxOpenEasy(data, nonce, senderPublicKey, this.privateKey);
     }
 
+    /**
+     * Returns if a node is in our buckets.
+     * @param node the node to check
+     * @return true if the node is in our buckets, false otherwise
+     */
+    public Node isNodeKnown(Node node) {
+        return this.buckets.contains(node);
+    }
+
+    /**
+     * Returns if a node will be inserted in our buckets.
+     * @param node the node to check
+     * @return true if the node will be inserted in our buckets, false otherwise
+     */
+    public boolean isInsertable(Node node) {
+        return this.buckets.isInsertable(node);
+    }
+
+    public void addNode(Node node) {
+        this.buckets.update(node);
+    }
 }

@@ -75,4 +75,29 @@ public class Buckets {
         return closest;
     }
 
+    /**
+     * Returns if the node is in the buckets.
+     * @param node The node to check.
+     * @return True if the node is in the buckets, false otherwise.
+     */
+    protected Node contains(Node node) {
+        for (KBucket bucket: this.buckets) {
+            if (bucket.contains(node) != null) {
+                return bucket.contains(node);
+            }
+        }
+        return null;
+    }
+
+    protected boolean isInsertable(Node node) {
+        if (this.contains(node) == null) {
+            ClientList closestToNode = this.getClosestTo(node, 1);
+            ClientList closestToBaseNode = new ClientList(ClientList.CLIENT_LIST_SIZE, this.baseNode);
+            closestToBaseNode.add(node);
+            closestToBaseNode.add(closestToNode.getNode(0));
+            return closestToBaseNode.getNode(0).equals(node); // If <node> is at first position in the client list, it is closer to the base node
+        }
+        return false;
+    }
+
 }

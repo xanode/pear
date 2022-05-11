@@ -127,9 +127,9 @@ public class Ping implements IPCCallback {
     }
 
     /**
-     * Execute the ping.
+     * Request a ping.
      */
-    public void execute() throws SodiumLibraryException {
+    public void sendRequest() throws SodiumLibraryException {
         // Send a ping request to the node
         new Thread(() -> {
             try {
@@ -145,6 +145,23 @@ public class Ping implements IPCCallback {
         while (!isReceived()) {
             // TODO: handle timeout
         }
+    }
+
+    /**
+     * Respond to the ping
+     */
+    public void sendResponse() throws SodiumLibraryException {
+        // Send a ping response to the node
+        new Thread(() -> {
+            try {
+                this.node
+                        .getDHT()
+                        .getNetwork()
+                        .sendPacket(Network.PACKET_PING_RESPONSE_TYPE, this.getPingRequestPayload(), this.node, this);
+            } catch (SodiumLibraryException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     /**

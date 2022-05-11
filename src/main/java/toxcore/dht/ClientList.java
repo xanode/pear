@@ -68,7 +68,7 @@ public class ClientList {
      * @param node2 Second node.
      * @return True if node1 is closer to the base node, false otherwise.
      */
-    private boolean getClosest(Node node1, Node node2) {
+    protected boolean getClosest(Node node1, Node node2) {
         // TODO: Constant used below should be replaced!
         byte[] baseKey = this.baseNode.getNodeKey();
         byte[] key1 = node1.getNodeKey();
@@ -83,5 +83,22 @@ public class ClientList {
             }
         }
         return false;
+    }
+
+    /**
+     * Get the base node.
+     * @return The base node.
+     */
+    protected Node getBaseNode() {
+        return this.baseNode;
+    }
+
+    /**
+     * Get a node in the list.
+     * @param index Index of the node to get.
+     * @return The node to get if it exists.
+     */
+    protected Node getNode(int index) {
+        return this.clientList.get(index);
     }
 }

@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Network {
@@ -62,7 +63,41 @@ public class Network {
                         // Call callback
                         callback.onCallback();
                         // Remove callback
-                        ipcCallbacks.remove(identifier);
+                        this.ipcCallbacks.remove(identifier);
+                    } else { // It is a request
+                        Node temporaryNode = new Node(
+                                this.dht,
+                                Arrays.copyOfRange(receivedPacket.getData(), 0, DHT.CRYPTO_PUBLIC_KEY_SIZE),
+                                receivedPacket.getAddress(),
+                                receivedPacket.getPort()
+                        );
+                        // Is the client in the buckets?
+                        Node node;
+                        if ((node = this.dht.isNodeKnown(temporaryNode)) != null) {
+                            try {
+                                // Decrypt packet
+                                byte[] decryptedPayload = this.dht.decrypt(
+                                        Arrays.copyOfRange(receivedPacket.getData(), 0, DHT.CRYPTO_PUBLIC_KEY_SIZE),
+                                        Arrays.copyOfRange(receivedPacket.getData(), DHT.CRYPTO_PUBLIC_KEY_SIZE, DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE),
+                                        Arrays.copyOfRange(receivedPacket.getData(), DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE, receivedPacket.getData().length)
+                                );
+                                // Decode packet
+                                Ping ping = new Ping(node, Arrays.copyOfRange(decryptedPayload, 1, decryptedPayload.length));
+                                // Send response
+                                ping.sendResponse();
+                            } catch (SodiumLibraryException e) {
+                                e.printStackTrace();
+                                System.exit(1);
+                            }
+                        } else {
+                            // If not, check if the requesting node is closer than at least one of the nodes in the buckets
+                            if (this.dht.isInsertable(temporaryNode)) {
+                                // Insert the node in the buckets
+                                this.dht.addNode(temporaryNode);
+                                // Send response
+                            }
+                        }
+
                     }
                     // TODO: If it is not a response, we should answer to the request, or it won't ever work
                 }).start();

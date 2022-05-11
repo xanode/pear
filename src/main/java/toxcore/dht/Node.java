@@ -1,12 +1,12 @@
 package toxcore.dht;
 
+import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Arrays;
-
-import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
 public class Node {
 
@@ -116,7 +116,7 @@ public class Node {
             new SecureRandom().nextBytes(pingId);
             Ping ping = new Ping(this, pingId);
             try {
-                ping.execute();
+                ping.sendRequest();
             } catch (SodiumLibraryException e) {
                 e.printStackTrace(); // Should never happen
             } /*catch (TimeoutException e) {
