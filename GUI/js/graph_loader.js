@@ -46,8 +46,16 @@ const labels_line = document.getElementById("labels");
 for (let i = 0; i < myData["nodes"].length; i++) {
   const node = myData["nodes"][i];
 
+  for (let j=0; j<myData["links"].length; j++){
+    var link = myData["links"][j];
+    if (link["source"] == node["id"]){
+      var cellText_target = document.createTextNode(link["target"]);
+    } else{
+      var cellText_target = document.createTextNode("None");
+    }
+  }
   
-  const link = myData["links"][i];
+  
 
   var new_line = document.createElement("tr");
   var row_id = document.createElement("td");
@@ -60,10 +68,12 @@ for (let i = 0; i < myData["nodes"].length; i++) {
   var cellText = document.createTextNode(node["val"]);
   row_val.appendChild(cellText);
   var row_target = document.createElement("td");
-  var cellText = document.createTextNode(link["target"]);
-  row_target.appendChild(cellText);
+  row_target.appendChild(cellText_target);
   
   new_line.appendChild(row_id);
+  new_line.appendChild(row_name);
+  new_line.appendChild(row_val);
+  new_line.appendChild(row_target);
   labels_line.after(new_line);
 };
 
