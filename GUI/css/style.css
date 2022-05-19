@@ -109,6 +109,12 @@
   margin-top: 7%;
 }
 
+#forced-graph-2d {
+  position: relative;
+  margin-left: 13%;
+  margin-top: 7%;
+}
+
 .inactive {
   display: none;
 }

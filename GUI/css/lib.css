@@ -52,14 +52,14 @@
 
 #toggle-3d .knobs:before
 {
-    content: 'ON';
+    content: '3D';
     color: rgb(255, 255, 255);
     left: 4px;
 }
 
 #toggle-3d .knobs:after
 {
-    content: 'OFF';
+    content: '3D';
     left: 42px;
     color: #fff;
     background-color: #f44336;

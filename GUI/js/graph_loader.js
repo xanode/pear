@@ -43,11 +43,18 @@ var myGraph_3d = ForceGraph3D()(div_3d)
 .graphData(myData);
 
 //2D graph
-const div_2d = document.getElementById('forced-graph-2d');
-var myGraph_2d = ForceGraph()(div_2d)
-.width(width)
-.height(height)
-.graphData(myData);
+const elem = document.getElementById('forced-graph-2d');
+const Graph = ForceGraph()(elem)
+  .backgroundColor('#101020')
+  .nodeRelSize(6)
+  .nodeAutoColorBy('user')
+  .linkColor(() => 'rgba(255,255,255,0.2)')
+  .linkDirectionalParticles(1)
+  .width(width)
+  .height(height)
+  .graphData(myData);
+
+
 
 
 //load table
@@ -58,10 +65,6 @@ for (let i = 0; i < myData["nodes"].length; i++) {
 
   //On travaille sur un seul noeud
   const node = myData["nodes"][i];
-
-  
-  
-  
 
   //On récupère l'ip
   var row_ip = document.createElement("td");
@@ -87,7 +90,6 @@ for (let i = 0; i < myData["nodes"].length; i++) {
       text_target = link["target"] + " -- " + text_target;
     }
   }
-  console.log(text_target);
   var cellText_target = document.createTextNode(text_target);
   var row_target = document.createElement("td");
   row_target.appendChild(cellText_target);
