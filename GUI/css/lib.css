@@ -52,7 +52,7 @@
 
 #toggle-3d .knobs:before
 {
-    content: '3D';
+    content: '2D';
     color: rgb(255, 255, 255);
     left: 4px;
 }

@@ -133,9 +133,34 @@
   top: 5px;
 }
 
-table,
-td {
+#tableau {
+  overflow: scroll;
+  height: 100%;
+}
+
+table, td {
   border: 1px solid #333;
+}
+
+tr {
+  height: 25px;
+}
+
+#target {
+  width: 120px;
+}
+
+#ip {
+  width: 120px;
+}
+
+#port {
+  width: 55px;
+}
+
+table {
+  position: relative;
+  margin: 30px auto;
 }
 
 thead,

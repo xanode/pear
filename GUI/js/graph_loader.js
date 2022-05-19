@@ -15,6 +15,36 @@ var myData = {
           "id": "192.168.1.3",
           "name": "192.168.1.3:2230",
           "val": 1
+        },
+        {
+          "id": "192.168.1.4",
+          "name": "192.168.1.4:2200",
+          "val": 2
+        },
+        {
+          "id": "192.168.1.5",
+          "name": "192.168.1.5:2200",
+          "val": 1
+        },
+        {
+          "id": "192.168.1.6",
+          "name": "192.168.1.6:2200",
+          "val": 1
+        },
+        {
+          "id": "192.168.1.7",
+          "name": "192.168.1.7:2200",
+          "val": 2
+        },
+        {
+          "id": "192.168.1.8",
+          "name": "192.168.1.8:2200",
+          "val": 1
+        },
+        {
+          "id": "192.168.1.9",
+          "name": "192.168.1.9:2200",
+          "val": 1
         }
     ],
     "links": [
@@ -25,9 +55,66 @@ var myData = {
         {
           "source": "192.168.1.1",
           "target": "192.168.1.3"
-        }
+        },
+        {
+          "source": "192.168.1.1",
+          "target": "192.168.1.6"
+        },
+        {
+          "source": "192.168.1.2",
+          "target": "192.168.1.7"
+        },
+        {
+          "source": "192.168.1.2",
+          "target": "192.168.1.9"
+        },
+        {
+          "source": "192.168.1.3",
+          "target": "192.168.1.5"
+        },
+        {
+          "source": "192.168.1.3",
+          "target": "192.168.1.6"
+      },
+      {
+        "source": "192.168.1.4",
+        "target": "192.168.1.9"
+      },
+      {
+        "source": "192.168.1.4",
+        "target": "192.168.1.2"
+      },
+      {
+        "source": "192.168.1.5",
+        "target": "192.168.1.7"
+      },
+      {
+        "source": "192.168.1.5",
+        "target": "192.168.1.8"
+      },
+      {
+        "source": "192.168.1.6",
+        "target": "192.168.1.1"
+      },
+      {
+        "source": "192.168.1.6",
+        "target": "192.168.1.2"
+    }
     ]
 }
+
+//On calcule les valeurs des poids
+for (let i = 0; i < myData["nodes"].length; i++) {
+  var node = myData["nodes"][i];
+  var val = 0;
+  for (let j=0; j<myData["links"].length; j++){
+    if (myData["links"][j]["source"] == node["id"] || myData["links"][j]["target"] == node["id"]){
+      val++;
+    }
+  }
+  node["val"] = val;
+}
+
 
 
 //size
@@ -38,16 +125,19 @@ var width = main_panel.clientWidth*(2/3);
 //3D graph
 const div_3d = document.getElementById('forced-graph-3d');
 var myGraph_3d = ForceGraph3D()(div_3d)
-.width(width)
-.height(height)
-.graphData(myData);
+  .width(width)
+  .height(height)
+  .backgroundColor('#101020')
+  .nodeAutoColorBy('id')
+  .linkColor(() => 'rgba(255,255,255,0.2)')
+  .graphData(myData);
 
 //2D graph
 const elem = document.getElementById('forced-graph-2d');
 const Graph = ForceGraph()(elem)
   .backgroundColor('#101020')
-  .nodeRelSize(6)
-  .nodeAutoColorBy('user')
+  .nodeRelSize(2)
+  .nodeAutoColorBy('id')
   .linkColor(() => 'rgba(255,255,255,0.2)')
   .linkDirectionalParticles(1)
   .width(width)
@@ -87,7 +177,7 @@ for (let i = 0; i < myData["nodes"].length; i++) {
   for (let j=0; j<myData["links"].length; j++){
     var link = myData["links"][j];
     if (link["source"] == node["id"]){
-      text_target = link["target"] + " -- " + text_target;
+      text_target = link["target"] + " " + text_target;
     }
   }
   var cellText_target = document.createTextNode(text_target);
