@@ -42,9 +42,29 @@ var myGraph_2d = ForceGraph()(div_2d)
 
 
 //load table
-nodes = myData["nodes"];
-console.log(nodes);
-nodes.forEach(node => {
-  const text = document.getElementById("nodes");
-  text.innerHTML = text.textContent + " "+node["name"];
-});
+const labels_line = document.getElementById("labels");
+for (let i = 0; i < myData["nodes"].length; i++) {
+  const node = myData["nodes"][i];
+
+  
+  const link = myData["links"][i];
+
+  var new_line = document.createElement("tr");
+  var row_id = document.createElement("td");
+  var cellText = document.createTextNode(node["id"]);
+  row_id.appendChild(cellText);
+  var row_name = document.createElement("td");
+  var cellText = document.createTextNode(node["name"]);
+  row_name.appendChild(cellText);
+  var row_val = document.createElement("td");
+  var cellText = document.createTextNode(node["val"]);
+  row_val.appendChild(cellText);
+  var row_target = document.createElement("td");
+  var cellText = document.createTextNode(link["target"]);
+  row_target.appendChild(cellText);
+  
+  new_line.appendChild(row_id);
+  labels_line.after(new_line);
+};
+
+

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/lib.css">
     <script src="js/forced-graph-3d.js"></script>
     <!--<script defer src="js/forced-graph-2d.js"></script>-->
-    <script src="https://unpkg.com/force-graph"></script>
+    <script defer src="https://unpkg.com/force-graph@1.42.9/dist/force-graph.min.js"></script>
 </head>
 
 <body>
@@ -38,10 +38,25 @@
             <div id="forced-graph-3d" class="inactive"></div>
             <div id="forced-graph-2d" class="inactive"></div>
             <div id="tableau" class="inactive">
-                <p id="nodes"></p>
+                <table id="table">
+                    <thead>
+                        <tr>
+                            <th colspan="4">Nodes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="labels">
+                            <td>ID</td>
+                            <td>Name</td>
+                            <td>Value</td>
+                            <td>Target</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+    <script defer src="https://unpkg.com/force-graph@1.42.9/dist/force-graph.min.js"></script>
     <script defer src="./js/script.js"></script>
     <script defer src="./js/graph_loader.js"></script>
 </body>
