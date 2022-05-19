@@ -2,20 +2,29 @@
 var myData = {
     "nodes": [
         {
-          "id": "id1",
-          "name": "name1",
+          "id": "192.168.1.1",
+          "name": "192.168.1.1:2200",
+          "val": 2
+        },
+        {
+          "id": "192.168.1.2",
+          "name": "192.168.1.2:2200",
           "val": 1
         },
         {
-          "id": "id2",
-          "name": "name2",
-          "val": 10
+          "id": "192.168.1.3",
+          "name": "192.168.1.3:2230",
+          "val": 1
         }
     ],
     "links": [
         {
-            "source": "id1",
-            "target": "id2"
+            "source": "192.168.1.1",
+            "target": "192.168.1.2"
+        },
+        {
+          "source": "192.168.1.1",
+          "target": "192.168.1.3"
         }
     ]
 }
@@ -44,36 +53,47 @@ var myGraph_2d = ForceGraph()(div_2d)
 //load table
 const labels_line = document.getElementById("labels");
 for (let i = 0; i < myData["nodes"].length; i++) {
+  //Création d'une nouvelle ligne
+  var new_line = document.createElement("tr");
+
+  //On travaille sur un seul noeud
   const node = myData["nodes"][i];
 
+  
+  
+  
+
+  //On récupère l'ip
+  var row_ip = document.createElement("td");
+  row_ip.appendChild(document.createTextNode(node["id"]));
+  new_line.appendChild(row_ip);
+
+  //le port
+  var row_port = document.createElement("td");
+  var port = node["name"].slice(node["name"].search(":")+1);
+  row_port.appendChild(document.createTextNode(port));
+  new_line.appendChild(row_port);
+
+  //La valeur
+  var row_val = document.createElement("td");
+  row_val.appendChild(document.createTextNode(node["val"]));
+  new_line.appendChild(row_val);
+
+  //On s'occupe de récupérer les targets
+  var text_target = "";
   for (let j=0; j<myData["links"].length; j++){
     var link = myData["links"][j];
     if (link["source"] == node["id"]){
-      var cellText_target = document.createTextNode(link["target"]);
-    } else{
-      var cellText_target = document.createTextNode("None");
+      text_target = link["target"] + " -- " + text_target;
     }
   }
-  
-  
-
-  var new_line = document.createElement("tr");
-  var row_id = document.createElement("td");
-  var cellText = document.createTextNode(node["id"]);
-  row_id.appendChild(cellText);
-  var row_name = document.createElement("td");
-  var cellText = document.createTextNode(node["name"]);
-  row_name.appendChild(cellText);
-  var row_val = document.createElement("td");
-  var cellText = document.createTextNode(node["val"]);
-  row_val.appendChild(cellText);
+  console.log(text_target);
+  var cellText_target = document.createTextNode(text_target);
   var row_target = document.createElement("td");
   row_target.appendChild(cellText_target);
-  
-  new_line.appendChild(row_id);
-  new_line.appendChild(row_name);
-  new_line.appendChild(row_val);
   new_line.appendChild(row_target);
+
+
   labels_line.after(new_line);
 };
 
