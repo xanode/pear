@@ -1,3 +1,9 @@
+/*
+
+Ce programme sert à créer les interactions avec les différents boutons de la page
+
+*/
+
 //sideNav buttons
 const graph_3d = document.getElementById('forced-graph-3d');
 const graph_2d = document.getElementById('forced-graph-2d');

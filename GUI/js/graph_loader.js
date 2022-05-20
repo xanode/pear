@@ -1,4 +1,14 @@
-//Data
+/*
+
+Dans ce programme on contruit tout les graphiques utiles pour la visualisation de nos noeuds
+
+On se sert de 2 librairies de modélisation de graph 2D et 3D
+https://github.com/vasturiano
+
+*/
+
+
+//Exemple de données reçus par l'API
 var myData = {
     "nodes": [
         {
@@ -103,7 +113,7 @@ var myData = {
     ]
 }
 
-//On calcule les valeurs des poids
+//On calcule les valeurs des poids qui seront stockés dans le champs "val"
 for (let i = 0; i < myData["nodes"].length; i++) {
   var node = myData["nodes"][i];
   var val = 0;
@@ -117,12 +127,12 @@ for (let i = 0; i < myData["nodes"].length; i++) {
 
 
 
-//size
+//On récupère la taille de l'écran
 const main_panel = document.getElementById('main_panel');
 var height = main_panel.clientHeight*(2/3);
 var width = main_panel.clientWidth*(2/3);
 
-//3D graph
+//On contruit le 3D graph
 const div_3d = document.getElementById('forced-graph-3d');
 var myGraph_3d = ForceGraph3D()(div_3d)
   .width(width)
@@ -132,7 +142,7 @@ var myGraph_3d = ForceGraph3D()(div_3d)
   .linkColor(() => 'rgba(255,255,255,0.2)')
   .graphData(myData);
 
-//2D graph
+//On construit le 2D graph
 const elem = document.getElementById('forced-graph-2d');
 const Graph = ForceGraph()(elem)
   .backgroundColor('#101020')
@@ -145,9 +155,7 @@ const Graph = ForceGraph()(elem)
   .graphData(myData);
 
 
-
-
-//load table
+//On charge la table
 const labels_line = document.getElementById("labels");
 for (let i = 0; i < myData["nodes"].length; i++) {
   //Création d'une nouvelle ligne
