@@ -139,7 +139,7 @@ var myGraph_3d = ForceGraph3D()(div_3d)
   .height(height)
   .backgroundColor('#101020')
   .nodeAutoColorBy('id')
-  .linkColor(() => 'rgba(255,255,255,0.2)')
+  .linkColor(() => 'rgba(255,255,255,1)')
   .graphData(myData);
 
 //On construit le 2D graph
