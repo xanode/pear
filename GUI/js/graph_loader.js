@@ -109,6 +109,30 @@ var myData = {
       {
         "source": "192.168.1.6",
         "target": "192.168.1.2"
+    },
+    {
+      "source": "192.168.1.4",
+      "target": "192.168.1.2"
+    },
+    {
+      "source": "192.168.1.8",
+      "target": "192.168.1.5"
+    },
+    {
+      "source": "192.168.1.9",
+      "target": "192.168.1.2"
+    },
+    {
+      "source": "192.168.1.4",
+      "target": "192.168.1.2"
+    },
+    {
+      "source": "192.168.1.7",
+      "target": "192.168.1.8"
+    },
+    {
+      "source": "192.168.1.6",
+      "target": "192.168.1.7"
     }
     ]
 }
@@ -119,7 +143,7 @@ for (let i = 0; i < myData["nodes"].length; i++) {
   var val = 0;
   for (let j=0; j<myData["links"].length; j++){
     if (myData["links"][j]["source"] == node["id"] || myData["links"][j]["target"] == node["id"]){
-      val++;
+      val+=2;
     }
   }
   node["val"] = val;
