@@ -1,6 +1,7 @@
-package toxcore.dht;
+package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import toxcore.dht.IPCCallback;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

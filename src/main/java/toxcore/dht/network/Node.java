@@ -1,6 +1,7 @@
-package toxcore.dht;
+package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import toxcore.dht.DHT;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -15,7 +16,7 @@ public class Node {
     private final InetAddress nodeAddress;
     private final int port;
 
-    Node(final DHT dht, final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
+    public Node(final DHT dht, final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
         if (nodeAddress.isMulticastAddress()) {
             // Do not accept multicast address it cannot represent a node
             throw new IllegalArgumentException("Multicast address not allowed");
@@ -30,7 +31,7 @@ public class Node {
      * Get node public key.
      * @return the node public key.
      */
-    protected byte[] getNodeKey() {
+    public byte[] getNodeKey() {
         return this.nodeKey;
     }
 
@@ -38,7 +39,7 @@ public class Node {
      * Get the node IP address.
      * @return the node IP address.
      */
-    protected InetAddress getNodeAddress() {
+    public InetAddress getNodeAddress() {
         return this.nodeAddress;
     }
 
@@ -46,7 +47,7 @@ public class Node {
      * Get the port of the node.
      * @return the port of the node.
      */
-    protected int getPort() {
+    public int getPort() {
         return this.port;
     }
 
@@ -54,7 +55,7 @@ public class Node {
      * Get the DHT instance of the node.
      * @return the DHT instance of the node.
      */
-    protected DHT getDHT() {
+    public DHT getDHT() {
         return this.dht;
     }
 
@@ -91,7 +92,7 @@ public class Node {
      * Prepare data for packaging.
      * @return Raw data into packed node format.
      */
-    protected byte[] prepareRawData() {
+    public byte[] prepareRawData() {
         int lengthAddress = (this.nodeAddress instanceof Inet4Address) ? Network.SIZE_IP4 : Network.SIZE_IP6;
         int addressFamily = (this.nodeAddress instanceof Inet4Address) ? Network.PEAR_AF_INET : Network.PEAR_AF_INET6;
         return ByteBuffer.allocate(1+7+lengthAddress+2+32)
@@ -107,7 +108,7 @@ public class Node {
      * Tell if a node is alive.
      * @return True if the node is alive, false either.
      */
-    protected boolean isAlive() {
+    public boolean isAlive() {
         if (!this.nodeAddress.isAnyLocalAddress()) {
             // TODO: check if the node is still alive
             return false;

@@ -1,4 +1,6 @@
-package toxcore.dht;
+package toxcore.dht.buckets;
+
+import toxcore.dht.network.Node;
 
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ public class ClientList {
      * @param node Node to add in the list.
      * @return True if it has been inserted in the list, false otherwise.
      */
-    protected boolean add(Node node) {
+    public boolean add(Node node) {
         // TODO: A node should be added only if it is closer than the farthest node in the list.
         // Check if list is full
         if (this.clientList.size() >= this.maximumSize) {
@@ -42,7 +44,7 @@ public class ClientList {
      * @param node Node to remove.
      * @return True if it has been removed, false otherwise.
      */
-    protected boolean remove(Node node) {
+    public boolean remove(Node node) {
         return this.clientList.remove(node);
     }
 
@@ -50,7 +52,7 @@ public class ClientList {
      * Get the actual size of the client list.
      * @return The size of the list.
      */
-    protected int getSize() {
+    public int getSize() {
         return this.clientList.size();
     }
 
@@ -58,7 +60,7 @@ public class ClientList {
      * Get the maximum size of the client list.
      * @return The maximum size of the list.
      */
-    protected int getMaximumSize() {
+    public int getMaximumSize() {
         return this.maximumSize;
     }
 
@@ -68,7 +70,7 @@ public class ClientList {
      * @param node2 Second node.
      * @return True if node1 is closer to the base node, false otherwise.
      */
-    protected boolean getClosest(Node node1, Node node2) {
+    public boolean getClosest(Node node1, Node node2) {
         // TODO: Constant used below should be replaced!
         byte[] baseKey = this.baseNode.getNodeKey();
         byte[] key1 = node1.getNodeKey();
@@ -89,7 +91,7 @@ public class ClientList {
      * Get the base node.
      * @return The base node.
      */
-    protected Node getBaseNode() {
+    public Node getBaseNode() {
         return this.baseNode;
     }
 
@@ -98,7 +100,7 @@ public class ClientList {
      * @param index Index of the node to get.
      * @return The node to get if it exists.
      */
-    protected Node getNode(int index) {
+    public Node getNode(int index) {
         return this.clientList.get(index);
     }
 }

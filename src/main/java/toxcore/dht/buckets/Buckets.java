@@ -1,4 +1,7 @@
-package toxcore.dht;
+package toxcore.dht.buckets;
+
+import toxcore.dht.DHT;
+import toxcore.dht.network.Node;
 
 import java.util.BitSet;
 
@@ -7,7 +10,7 @@ public class Buckets {
     private final Node baseNode;
     private KBucket[] buckets;
 
-    Buckets(final Node baseNode, int size) {
+    public Buckets(final Node baseNode, int size) {
         this.baseNode = baseNode;
         this.buckets = new KBucket[size]; // Size should be 256 because there are 256 bits keys
         for (int i=0; i<size; i++) {
@@ -36,7 +39,7 @@ public class Buckets {
      * Update a KBucket with a new node.
      * @param node The node that may be added to the KBucket.
      */
-    protected void update(Node node) {
+    public void update(Node node) {
         int index = this.bucketIndex(node);
         this.buckets[index].update(node);
     }
@@ -46,7 +49,7 @@ public class Buckets {
      * @param max The number of nodes wanted.
      * @return The list of the nearest known nodes.
      */
-    protected ClientList getClosest(int max) {
+    public ClientList getClosest(int max) {
         // Use getClosestTo with the base node as parameter?
         ClientList closest = new ClientList(max, this.baseNode);
         for (KBucket bucket: this.buckets) {
@@ -65,7 +68,7 @@ public class Buckets {
      * @param max The number of nodes wanted.
      * @return The list of the nearest known nodes.
      */
-    protected ClientList getClosestTo(Node node, int max) {
+    public ClientList getClosestTo(Node node, int max) {
         ClientList closest = new ClientList(max, node);
         for (Node currentNode: this.buckets[this.bucketIndex(node)].toArrayList()) { // TODO: If there is nothing in that bucket?
             if (!closest.add(currentNode)) {
@@ -80,7 +83,7 @@ public class Buckets {
      * @param node The node to check.
      * @return True if the node is in the buckets, false otherwise.
      */
-    protected Node contains(Node node) {
+    public Node contains(Node node) {
         for (KBucket bucket: this.buckets) {
             if (bucket.contains(node) != null) {
                 return bucket.contains(node);
@@ -89,7 +92,7 @@ public class Buckets {
         return null;
     }
 
-    protected boolean isInsertable(Node node) {
+    public boolean isInsertable(Node node) {
         if (this.contains(node) == null) {
             ClientList closestToNode = this.getClosestTo(node, 1);
             ClientList closestToBaseNode = new ClientList(ClientList.CLIENT_LIST_SIZE, this.baseNode);

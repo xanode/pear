@@ -6,14 +6,17 @@ import com.muquit.libsodiumjna.SodiumKeyPair;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
+import toxcore.dht.buckets.Buckets;
+import toxcore.dht.network.Network;
+import toxcore.dht.network.Node;
 
 public class DHT {
 
     // Constants
     // Crypto-related constants
-    protected static final byte CRYPTO_PUBLIC_KEY_SIZE = 32;
-    protected static final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
-    protected static final byte CRYPTO_NONCE_SIZE = 24;
+    public static final byte CRYPTO_PUBLIC_KEY_SIZE = 32;
+    public static final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
+    public static final byte CRYPTO_NONCE_SIZE = 24;
 
     // Attributes
     private final String libraryPath;

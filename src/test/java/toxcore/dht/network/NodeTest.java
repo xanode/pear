@@ -1,9 +1,11 @@
-package toxcore.dht;
+package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import toxcore.dht.DHT;
+import toxcore.dht.network.Node;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

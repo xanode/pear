@@ -1,4 +1,4 @@
-package toxcore.dht;
+package toxcore.dht.network;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,6 +13,10 @@ import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import toxcore.dht.DHT;
+import toxcore.dht.network.Network;
+import toxcore.dht.network.Node;
+import toxcore.dht.network.Ping;
 
 @DisplayName("Ping Test")
 class PingTest {

@@ -1,4 +1,6 @@
-package toxcore.dht;
+package toxcore.dht.buckets;
+
+import toxcore.dht.network.Node;
 
 import java.util.ArrayList;
 
@@ -16,7 +18,7 @@ public class KBucket {
      * Update this KBucket with a new node.
      * @param node The node to update the KBucket.
      */
-    protected void update(Node node) {
+    public void update(Node node) {
         // If the node already exist in the bucket, move it to the tail of the list
         if (this.bucket.contains(node)) {
             this.bucket.remove(node);
@@ -40,7 +42,7 @@ public class KBucket {
      * Get the actual size of the KBucket.
      * @return The size of the KBucket.
      */
-    protected int getSize() {
+    public int getSize() {
         return this.bucket.size();
     }
 
@@ -56,7 +58,7 @@ public class KBucket {
      * Return the ArrayList to be able to iterate over the KBucket.
      * @return The ArrayList of the KBucket.
      */
-    protected ArrayList<Node> toArrayList() {
+    public ArrayList<Node> toArrayList() {
         return this.bucket;
     }
 
@@ -65,7 +67,7 @@ public class KBucket {
      * @param node The node to check.
      * @return True if the node is in the KBucket, false otherwise.
      */
-    protected Node contains(Node node) {
+    public Node contains(Node node) {
         for (Node n : this.bucket) {
             if (n.equals(node)) {
                 return n;

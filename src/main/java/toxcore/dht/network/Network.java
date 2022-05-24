@@ -1,6 +1,9 @@
-package toxcore.dht;
+package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import toxcore.dht.AsynchronousService;
+import toxcore.dht.DHT;
+import toxcore.dht.IPCCallback;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -9,47 +12,50 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Network {
 
     // Constants
     // Packet types
-    protected static final byte PACKET_TYPE_LENGTH = 1;
-    protected static final byte PACKET_PING_REQUEST_TYPE = 0;
-    protected static final byte PACKET_PING_RESPONSE_TYPE = 1;
-    protected static final byte PACKET_FIND_NODE_REQUEST_TYPE = 2; // Node request
-    protected static final byte PACKET_FIND_NODE_RESPONSE_TYPE = 4; // Node response
+    public static final byte PACKET_TYPE_LENGTH = 1;
+    public static final byte PACKET_PING_REQUEST_TYPE = 0;
+    public static final byte PACKET_PING_RESPONSE_TYPE = 1;
+    public static final byte PACKET_FIND_NODE_REQUEST_TYPE = 2; // Node request
+    public static final byte PACKET_FIND_NODE_RESPONSE_TYPE = 4; // Node response
     // Network related constants
-    protected static final byte PEAR_AF_INET = 2;
-    protected static final byte PEAR_AF_INET6 = 10;
-    protected static final byte SIZE_IP4 = 4;
-    protected static final byte SIZE_IP6 = 16;
-    private static final int MAX_UDP_PACKET_SIZE = 65536;
+    public static final byte PEAR_AF_INET = 2;
+    public static final byte PEAR_AF_INET6 = 10;
+    public static final byte SIZE_IP4 = 4;
+    public static final byte SIZE_IP6 = 16;
+    public static final int MAX_UDP_PACKET_SIZE = 65536;
     // Ping related constants
-    protected static final int PING_ID_LENGTH = 8;
-    protected static final int PING_PORT = 33445;
-    protected static final int PING_TIMEOUT = 10000; // ms
+    public static final int PING_ID_LENGTH = 8;
+    public static final int PING_PORT = 33445;
+    public static final int PING_TIMEOUT = 10000; // ms
 
     // Attributes
-    protected final DHT dht;
+    public final DHT dht;
     protected DatagramSocket pingSocket;
     private boolean running;
     private ConcurrentHashMap <byte[], IPCCallback> ipcCallbacks; // byte[] is the node address, the node port and the expected response type
 
-    protected Network(DHT dht) {
+    public Network(DHT dht) {
         this.dht = dht;
     }
 
     /**
      * Handle received packets.
      */
-    protected void handle() throws SocketException {
+    public void handle() throws SocketException {
         this.pingSocket = new DatagramSocket(PING_PORT);
+        var service = new AsynchronousService(new LinkedBlockingDeque<>());
         this.running = true;
         while (running) {
             DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
             try {
                 this.pingSocket.receive(receivedPacket);
+                //service.execute(new HandlePacketTask(receivedPacket.getData()));
                 new Thread(() -> {
                     // Decode packet
                     byte[] identifier = ByteBuffer.allocate(receivedPacket.getAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
@@ -105,13 +111,14 @@ public class Network {
                 e.printStackTrace();
             }
         }
+        service.close();
     }
 
     /**
      * Stop the network core of the DHT.
      * Close the ping socket.
      */
-    protected void close() {
+    public void close() {
         this.running = false;
         this.pingSocket.close();
     }
@@ -121,7 +128,7 @@ public class Network {
      * @param type The type of the packet.
      * @return The header of the packet.
      */
-    protected byte[] generatePacketHeader(byte type, byte[] nonce) {
+    public byte[] generatePacketHeader(byte type, byte[] nonce) {
         ByteBuffer header = ByteBuffer.allocate(
                 PACKET_TYPE_LENGTH
                 + DHT.CRYPTO_PUBLIC_KEY_SIZE
@@ -145,7 +152,7 @@ public class Network {
      * @param payload The payload of the packet to send.
      * @param node The node to send the packet to.
      */
-    protected void sendPacket(byte type, byte[] payload, Node node, IPCCallback ipcCallback) throws SodiumLibraryException {
+    public void sendPacket(byte type, byte[] payload, Node node, IPCCallback ipcCallback) throws SodiumLibraryException {
         // Check if type is valid
         if (type != PACKET_PING_REQUEST_TYPE && type != PACKET_PING_RESPONSE_TYPE && type != PACKET_FIND_NODE_REQUEST_TYPE && type != PACKET_FIND_NODE_RESPONSE_TYPE) {
             throw new IllegalArgumentException("Invalid packet type: " + type);
