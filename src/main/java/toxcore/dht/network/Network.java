@@ -1,7 +1,7 @@
 package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
-import toxcore.dht.AsynchronousService;
+import toxcore.dht.async.AsynchronousService;
 import toxcore.dht.DHT;
 import toxcore.dht.IPCCallback;
 
