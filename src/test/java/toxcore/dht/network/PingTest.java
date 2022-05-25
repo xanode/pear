@@ -101,7 +101,9 @@ class PingTest {
         Node node;
 
         rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address
+        while (InetAddress.getByAddress(randomInetAddress).isMulticastAddress()) { // Force the address not to be a multicast address
+            rd.nextBytes(randomInetAddress);
+        }
 
         node = new Node(
                 new DHT(), // Necessary to initialize the Sodium library
@@ -117,7 +119,9 @@ class PingTest {
         Node node;
 
         rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (rd.nextInt(240) + 1); // Force the address not to be a multicast address
+        while (InetAddress.getByAddress(randomInetAddress).isMulticastAddress()) { // Force the address not to be a multicast address
+            rd.nextBytes(randomInetAddress);
+        }
 
         node = new Node(
                 new DHT(), // Necessary to initialize the Sodium library

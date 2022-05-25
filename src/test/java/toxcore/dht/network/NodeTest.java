@@ -172,10 +172,14 @@ public class NodeTest {
         byte[] randomInetAddress = new byte[4];
         rd.nextBytes(randomInetAddress);
 
-        if (isMulticastAddress) {
-            randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
-        } else {
-            randomInetAddress[0] = (byte) (rd.nextInt(240) + 1);
+        if (isMulticastAddress) { // Force the address to be multicast
+            while (!InetAddress.getByAddress(randomInetAddress).isMulticastAddress()) {
+                rd.nextBytes(randomInetAddress);
+            }
+        } else { // Force the address not to be multicast
+            while (InetAddress.getByAddress(randomInetAddress).isMulticastAddress()) {
+                rd.nextBytes(randomInetAddress);
+            }
         }
 
         return new Node(

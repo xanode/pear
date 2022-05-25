@@ -19,7 +19,7 @@ public class Node {
 
     public Node(final DHT dht, final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
         if (nodeAddress.isMulticastAddress()) {
-            // Do not accept multicast address it cannot represent a node
+            // Do not accept multicast address since it cannot represent a node
             throw new IllegalArgumentException("Multicast address not allowed");
         }
         this.dht = dht;
