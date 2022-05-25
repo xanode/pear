@@ -58,9 +58,9 @@ public class Network {
         while (running) {
             log.info("Waiting for packets...");
             DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
-            log.info("Packet received!");
             try {
                 this.pingSocket.receive(receivedPacket);
+                log.info("Packet received!");
                 service.execute(new PacketManagementTask(this.dht, receivedPacket.getData(), this.trackingSentPacket));
             } catch (IOException e) {
                 e.printStackTrace();
