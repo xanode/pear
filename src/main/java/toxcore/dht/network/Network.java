@@ -3,14 +3,13 @@ package toxcore.dht.network;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import toxcore.dht.async.AsynchronousService;
 import toxcore.dht.DHT;
-import toxcore.dht.IPCCallback;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -30,7 +29,7 @@ public class Network {
     public static final byte SIZE_IP6 = 16;
     public static final int MAX_UDP_PACKET_SIZE = 65536;
     // Ping related constants
-    public static final int PING_ID_LENGTH = 8;
+    public static final int ID_LENGTH = 8;
     public static final int PING_PORT = 33445;
     public static final int PING_TIMEOUT = 10000; // ms
 
@@ -38,7 +37,7 @@ public class Network {
     public final DHT dht;
     protected DatagramSocket pingSocket;
     private boolean running;
-    private ConcurrentHashMap <byte[], IPCCallback> ipcCallbacks; // byte[] is the node address, the node port and the expected response type
+    private ConcurrentHashMap <byte[], Callable> trackingSentPacket; // byte[] is the packet identifier
 
     public Network(DHT dht) {
         this.dht = dht;
@@ -55,58 +54,7 @@ public class Network {
             DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
             try {
                 this.pingSocket.receive(receivedPacket);
-                //service.execute(new HandlePacketTask(receivedPacket.getData()));
-                new Thread(() -> {
-                    // Decode packet
-                    byte[] identifier = ByteBuffer.allocate(receivedPacket.getAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
-                            .put(receivedPacket.getAddress().getAddress())
-                            .putShort((short) receivedPacket.getPort())
-                            .put(receivedPacket.getData(), 0, PACKET_TYPE_LENGTH)
-                            .array();
-                    // Get IPC callback if it exists
-                    IPCCallback callback = ipcCallbacks.get(identifier);
-                    if (callback != null) { // It is a response
-                        // Call callback
-                        callback.onCallback();
-                        // Remove callback
-                        this.ipcCallbacks.remove(identifier);
-                    } else { // It is a request
-                        Node temporaryNode = new Node(
-                                this.dht,
-                                Arrays.copyOfRange(receivedPacket.getData(), 0, DHT.CRYPTO_PUBLIC_KEY_SIZE),
-                                receivedPacket.getAddress(),
-                                receivedPacket.getPort()
-                        );
-                        // Is the client in the buckets?
-                        Node node;
-                        if ((node = this.dht.isNodeKnown(temporaryNode)) != null) {
-                            try {
-                                // Decrypt packet
-                                byte[] decryptedPayload = this.dht.decrypt(
-                                        Arrays.copyOfRange(receivedPacket.getData(), 0, DHT.CRYPTO_PUBLIC_KEY_SIZE),
-                                        Arrays.copyOfRange(receivedPacket.getData(), DHT.CRYPTO_PUBLIC_KEY_SIZE, DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE),
-                                        Arrays.copyOfRange(receivedPacket.getData(), DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE, receivedPacket.getData().length)
-                                );
-                                // Decode packet
-                                Ping ping = new Ping(node, Arrays.copyOfRange(decryptedPayload, 1, decryptedPayload.length));
-                                // Send response
-                                ping.sendResponse();
-                            } catch (SodiumLibraryException e) {
-                                e.printStackTrace();
-                                System.exit(1);
-                            }
-                        } else {
-                            // If not, check if the requesting node is closer than at least one of the nodes in the buckets
-                            if (this.dht.isInsertable(temporaryNode)) {
-                                // Insert the node in the buckets
-                                this.dht.addNode(temporaryNode);
-                                // Send response
-                            }
-                        }
-
-                    }
-                    // TODO: If it is not a response, we should answer to the request, or it won't ever work
-                }).start();
+                service.execute(new PacketManagementTask(this.dht, receivedPacket.getData(), this.trackingSentPacket));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -148,45 +96,21 @@ public class Network {
 
     /**
      * Send a packet to a given node.
-     * @param type The type of the packet.
-     * @param payload The payload of the packet to send.
-     * @param node The node to send the packet to.
+     * @param packet The packet to send
+     * @param receiver The node to send to packet to
+     * @param callback The method to call when receiving the response
      */
-    public void sendPacket(byte type, byte[] payload, Node node, IPCCallback ipcCallback) throws SodiumLibraryException {
-        // Check if type is valid
-        if (type != PACKET_PING_REQUEST_TYPE && type != PACKET_PING_RESPONSE_TYPE && type != PACKET_FIND_NODE_REQUEST_TYPE && type != PACKET_FIND_NODE_RESPONSE_TYPE) {
-            throw new IllegalArgumentException("Invalid packet type: " + type);
+    public void sendPacket(Packet packet, Node receiver, Callable callback) throws SodiumLibraryException {
+        // Check packet
+        if (packet.getSenderPublicKey() != receiver.getNodeKey()) {
+            throw new IllegalArgumentException("Receiver node public key and packet public key mismatch");
         }
-        // Encrypt payload
-        byte[] nonce = dht.generateNonce();
-        byte[] encryptedPayload = dht.encrypt(node.getNodeKey(), nonce, payload);
-        // Build packet
-        byte[] packet = ByteBuffer.allocate(
-                        PACKET_TYPE_LENGTH
-                        + DHT.CRYPTO_PUBLIC_KEY_SIZE
-                        + DHT.CRYPTO_NONCE_SIZE
-                        + encryptedPayload.length
-                )
-                .put(this.generatePacketHeader(type, nonce))
-                .put(encryptedPayload)
-                .array();
-        DatagramPacket pingPacket = new DatagramPacket(packet, packet.length, node.getNodeAddress(), node.getPort());
         // Send packet
         try {
-            this.pingSocket.send(pingPacket);
+            byte[] data = packet.toByteArray(this.dht);
+            this.pingSocket.send(new DatagramPacket(data, data.length, receiver.getNodeAddress(), receiver.getPort()));
             // Register it to handle response
-            byte expectedResponseType;
-            switch (type) {
-                case PACKET_PING_REQUEST_TYPE -> expectedResponseType = PACKET_PING_RESPONSE_TYPE;
-                case PACKET_FIND_NODE_REQUEST_TYPE -> expectedResponseType = PACKET_FIND_NODE_RESPONSE_TYPE;
-                default -> throw new IllegalArgumentException("Invalid packet type: " + type);
-            }
-            byte[] identifier = ByteBuffer.allocate(node.getNodeAddress().getAddress().length + 2 + PACKET_TYPE_LENGTH)
-                    .put(node.getNodeAddress().getAddress())
-                    .putShort((short)node.getPort())
-                    .put(expectedResponseType)
-                    .array();
-            this.ipcCallbacks.put(identifier, ipcCallback);
+            this.trackingSentPacket.put(packet.getIdentifier(), callback);
         } catch (IOException e) {
             e.printStackTrace();
         }

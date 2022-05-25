@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Date;
 
 public class Node {
 
@@ -110,19 +111,20 @@ public class Node {
      */
     public boolean isAlive() {
         if (!this.nodeAddress.isAnyLocalAddress()) {
-            // TODO: check if the node is still alive
             return false;
         } else {
-            byte[] pingId = new byte[Network.PING_ID_LENGTH];
+            byte[] pingId = new byte[Network.ID_LENGTH];
             new SecureRandom().nextBytes(pingId);
             Ping ping = new Ping(this, pingId);
             try {
-                ping.sendRequest();
+                ping.send(PacketType.REQUEST);
+                while (!ping.isReceived() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT);
+                if (!ping.isReceived()) {
+                    return false;
+                }
             } catch (SodiumLibraryException e) {
                 e.printStackTrace(); // Should never happen
-            } /*catch (TimeoutException e) {
-                return false; // Timeout
-            }*/
+            }
             return true;
         }
     }

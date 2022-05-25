@@ -1,13 +1,13 @@
 package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
-import toxcore.dht.IPCCallback;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.concurrent.Callable;
 
-public class Ping implements IPCCallback {
+public class Ping implements Callable<Integer> {
 
     private final Node node;
     private final byte[] pingId;
@@ -121,55 +121,39 @@ public class Ping implements IPCCallback {
      * @return the data to build a ping packet
      */
     private byte[] getPingRequestPayload() {
-        return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + Network.PING_ID_LENGTH)
+        return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + Network.ID_LENGTH)
                 .put(Network.PACKET_PING_REQUEST_TYPE)
                 .put(this.pingId)
                 .array();
     }
 
     /**
-     * Request a ping.
+     * Send ping packet.
+     * @param type Ping packet type
+     * @throws SodiumLibraryException If the cryptographic-related data avoid encrypt the packet
      */
-    public void sendRequest() throws SodiumLibraryException {
-        // Send a ping request to the node
-        new Thread(() -> {
-            try {
-                this.node
-                        .getDHT()
-                        .getNetwork()
-                        .sendPacket(Network.PACKET_PING_REQUEST_TYPE, this.getPingRequestPayload(), this.node, this);
-            } catch (SodiumLibraryException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        this.sentDate = new Date(); // Set the sent date
-        while (!isReceived()) {
-            // TODO: handle timeout
-        }
-    }
-
-    /**
-     * Respond to the ping
-     */
-    public void sendResponse() throws SodiumLibraryException {
-        // Send a ping response to the node
-        new Thread(() -> {
-            try {
-                this.node
-                        .getDHT()
-                        .getNetwork()
-                        .sendPacket(Network.PACKET_PING_RESPONSE_TYPE, this.getPingRequestPayload(), this.node, this);
-            } catch (SodiumLibraryException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    public void send(PacketType type) throws SodiumLibraryException {
+        Packet packet = new Packet(
+                type,
+                RPCService.PING,
+                this.node.getNodeKey(),
+                null,
+                this.pingId,
+                null
+        );
+        this.node
+                .getDHT()
+                .getNetwork()
+                .sendPacket(packet, this.node, this);
+        this.sentDate = new Date();
     }
 
     /**
      * Set received date when callback is called.
      */
     @Override
-    public void onCallback() {
-        setReceivedDate(new Date());
+    public Integer call() {
+        this.setReceivedDate(new Date());
+        return 0;
     }
 }
