@@ -1,11 +1,13 @@
 package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.DHT;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+@Slf4j
 public class Packet {
 
     private final PacketType type;
@@ -51,6 +53,7 @@ public class Packet {
          * - Identifier (8 bytes)
          * - Payload
          */
+        log.info("Decoding packet...");
         this.senderPublicKey = Arrays.copyOfRange(
                 data,
                 Network.PACKET_TYPE_LENGTH,
@@ -61,6 +64,7 @@ public class Packet {
                 Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE,
                 Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE
         );
+        log.info("Decrypting payload...");
         byte[] packetPayload = dht.decrypt(
                 this.senderPublicKey,
                 this.nonce,
@@ -70,6 +74,7 @@ public class Packet {
                         data.length
                 )
         );
+        log.info("Decrypted.");
         if (data[Network.PACKET_TYPE_LENGTH - 1] != packetPayload[Network.PACKET_TYPE_LENGTH - 1]) {
             throw new IllegalArgumentException("Packet type mismatch");
         }
@@ -102,6 +107,7 @@ public class Packet {
                 Network.PACKET_TYPE_LENGTH + Network.ID_LENGTH,
                 packetPayload.length
         );
+        log.info("Packet decoded.");
     }
 
     /**
@@ -112,6 +118,7 @@ public class Packet {
      * @throws SodiumLibraryException If the cryptographic-related data avoid encrypt the packet
      */
     public byte[] toByteArray(DHT dht, byte[] receiverPublicKey) throws SodiumLibraryException {
+        log.info("Transforming packet " + Arrays.toString(this.identifier) + " into byte array...");
         // Encrypt
         byte type;
         if (this.type == PacketType.REQUEST && this.service == RPCService.PING) {
@@ -128,7 +135,11 @@ public class Packet {
                 .put(this.identifier)
                 .put(this.payload)
                 .array();
+        log.info("Encrypting payload...");
         byte[] encryptedPayload = dht.encrypt(this.senderPublicKey, dht.generateNonce(), packetPayload);
+        log.info("Payload encrypted.");
+
+        log.info("Packet " + Arrays.toString(this.identifier) + " transformed into a byte array (just before return).");
 
         return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE + encryptedPayload.length)
                 .put(type)

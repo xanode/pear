@@ -1,6 +1,7 @@
 package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.async.AsynchronousService;
 import toxcore.dht.DHT;
 
@@ -8,11 +9,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@Slf4j
 public class Network {
 
     // Constants
@@ -47,11 +48,17 @@ public class Network {
      * Handle received packets.
      */
     public void handle() throws SocketException {
+        log.info("Starting network service...");
         this.pingSocket = new DatagramSocket(PING_PORT);
+        log.info("Creating asynchronous service...");
         var service = new AsynchronousService(new LinkedBlockingDeque<>());
+        log.info("Asynchronous service created.");
         this.running = true;
+        log.info("Network service started.");
         while (running) {
+            log.info("Waiting for packets...");
             DatagramPacket receivedPacket = new DatagramPacket(new byte[MAX_UDP_PACKET_SIZE], MAX_UDP_PACKET_SIZE);
+            log.info("Packet received!");
             try {
                 this.pingSocket.receive(receivedPacket);
                 service.execute(new PacketManagementTask(this.dht, receivedPacket.getData(), this.trackingSentPacket));
@@ -59,7 +66,10 @@ public class Network {
                 e.printStackTrace();
             }
         }
+        log.info("Closing asynchronous service...");
         service.close();
+        log.info("Asynchronous service closed.");
+        log.info("Network service closed.");
     }
 
     /**
@@ -67,31 +77,10 @@ public class Network {
      * Close the ping socket.
      */
     public void close() {
+        log.info("Closing network service...");
         this.running = false;
         this.pingSocket.close();
-    }
-
-    /**
-     * Generate the header of a packet.
-     * @param type The type of the packet.
-     * @return The header of the packet.
-     */
-    public byte[] generatePacketHeader(byte type, byte[] nonce) {
-        ByteBuffer header = ByteBuffer.allocate(
-                PACKET_TYPE_LENGTH
-                + DHT.CRYPTO_PUBLIC_KEY_SIZE
-                + DHT.CRYPTO_NONCE_SIZE
-        );
-        switch (type) {
-            case PACKET_PING_REQUEST_TYPE -> header.put(PACKET_PING_REQUEST_TYPE);
-            case PACKET_PING_RESPONSE_TYPE -> header.put(PACKET_PING_RESPONSE_TYPE);
-            case PACKET_FIND_NODE_REQUEST_TYPE -> header.put(PACKET_FIND_NODE_REQUEST_TYPE);
-            case PACKET_FIND_NODE_RESPONSE_TYPE -> header.put(PACKET_FIND_NODE_RESPONSE_TYPE);
-            default -> throw new IllegalArgumentException("Invalid packet type: " + type);
-        }
-        header.put(dht.getPublicKey()); // Public of key of the sender !
-        header.put(nonce);
-        return header.array();
+        log.info("Socket closed.");
     }
 
     /**

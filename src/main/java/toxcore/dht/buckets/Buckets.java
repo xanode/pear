@@ -1,10 +1,12 @@
 package toxcore.dht.buckets;
 
+import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.DHT;
 import toxcore.dht.network.Node;
 
 import java.util.BitSet;
 
+@Slf4j
 public class Buckets {
 
     private final Node baseNode;

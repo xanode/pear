@@ -1,10 +1,10 @@
 package toxcore.dht.network;
 
-import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.DHT;
 import toxcore.dht.async.AsyncTask;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,8 +14,6 @@ public class PacketManagementTask implements AsyncTask<Callable> {
     private final byte[] data;
     private final DHT dht;
     private final ConcurrentHashMap<byte[], Callable> trackingSentPackets;
-
-    private Packet packet;
 
     PacketManagementTask(DHT dht, byte[] data, ConcurrentHashMap<byte[], Callable> trackingSentPackets) {
         this.dht = dht;
@@ -46,13 +44,15 @@ public class PacketManagementTask implements AsyncTask<Callable> {
 
     @Override
     public Callable call() throws Exception {
-        this.packet = new Packet(this.dht, this.data);
-        switch(this.packet.getType()) {
+        Packet packet = new Packet(this.dht, this.data);
+        switch(packet.getType()) {
             case REQUEST -> {
+                log.info("Managing a request from " + Arrays.toString(packet.getSenderPublicKey()));
                 // TODO: Add the node in buckets and answer
             }
             case RESPONSE -> {
-                return this.trackingSentPackets.get(this.packet.getIdentifier());
+                log.info("Managing a response from " + Arrays.toString(packet.getSenderPublicKey()));
+                return this.trackingSentPackets.get(packet.getIdentifier());
             }
         }
         return null;

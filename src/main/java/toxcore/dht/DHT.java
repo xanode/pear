@@ -6,10 +6,12 @@ import com.muquit.libsodiumjna.SodiumKeyPair;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
+import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.buckets.Buckets;
 import toxcore.dht.network.Network;
 import toxcore.dht.network.Node;
 
+@Slf4j
 public class DHT {
 
     // Constants
@@ -27,6 +29,7 @@ public class DHT {
 
     public DHT() throws SodiumLibraryException {
         // Load libsodium library
+        log.info("Loading libsodium library...");
         if (Platform.isWindows()) {
             this.libraryPath = "C:/libsodium/libsodium.dll";
         } else if (Platform.isMac()) {
@@ -35,24 +38,33 @@ public class DHT {
             this.libraryPath = "/usr/lib64/libsodium.so.23"; // TODO: the right place depend on the distro
         }
         SodiumLibrary.setLibraryPath(this.libraryPath);
+        log.info("libsodium library loaded.");
 
         // Generate keys
+        log.info("Generating keys...");
         SodiumKeyPair keyPair = SodiumLibrary.cryptoBoxKeyPair();
         this.publicKey = keyPair.getPublicKey();
         this.privateKey = keyPair.getPrivateKey();
+        log.info("Key pair generated.");
 
         // Initialize buckets
+        log.info("Initialize buckets...");
         // Create a node with our public key
+        log.info("Creating a homomorphic node...");
         Node node = new Node(
                 this,
                 this.publicKey,
                 InetAddress.getLoopbackAddress(),
                 Network.PING_PORT
         );
+        log.info("Homomorphic node created.");
         this.buckets = new Buckets(node, 8 * CRYPTO_PUBLIC_KEY_SIZE); // Size in Buckets is the number of bits in the public key
+        log.info("Buckets initialized.");
 
         // Initialize network
+        log.info("Initialize network...");
         this.network = new Network(this);
+        log.info("Network initialized.");
     }
 
     /**
@@ -126,4 +138,5 @@ public class DHT {
     public void addNode(Node node) {
         this.buckets.update(node);
     }
+
 }

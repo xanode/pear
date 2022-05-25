@@ -1,12 +1,13 @@
 package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
+@Slf4j
 public class Ping implements Callable<Integer> {
 
     private final Node node;
@@ -117,22 +118,12 @@ public class Ping implements Callable<Integer> {
     }
 
     /**
-     * Prepare data to build a ping packet.
-     * @return the data to build a ping packet
-     */
-    private byte[] getPingRequestPayload() {
-        return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + Network.ID_LENGTH)
-                .put(Network.PACKET_PING_REQUEST_TYPE)
-                .put(this.pingId)
-                .array();
-    }
-
-    /**
      * Send ping packet.
      * @param type Ping packet type
      * @throws SodiumLibraryException If the cryptographic-related data avoid encrypt the packet
      */
     public void send(PacketType type) throws SodiumLibraryException {
+        log.info("Creating packet...");
         Packet packet = new Packet(
                 type,
                 RPCService.PING,
@@ -141,11 +132,15 @@ public class Ping implements Callable<Integer> {
                 this.pingId,
                 null
         );
+        log.info("Packet created.");
+        log.info("Sending...");
         this.node
                 .getDHT()
                 .getNetwork()
                 .sendPacket(packet, this.node, this);
+        log.info("Sended.");
         this.sentDate = new Date();
+        log.info("Sent date settled.");
     }
 
     /**
@@ -153,6 +148,7 @@ public class Ping implements Callable<Integer> {
      */
     @Override
     public Integer call() {
+        log.info("Informed that the response has been received via a callback. Setting received date.");
         this.setReceivedDate(new Date());
         return 0;
     }

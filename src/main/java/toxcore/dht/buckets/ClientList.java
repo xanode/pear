@@ -1,9 +1,11 @@
 package toxcore.dht.buckets;
 
+import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.network.Node;
 
 import java.util.ArrayList;
 
+@Slf4j
 public class ClientList {
 
     private final int maximumSize;
@@ -26,16 +28,20 @@ public class ClientList {
     public boolean add(Node node) {
         // TODO: A node should be added only if it is closer than the farthest node in the list.
         // Check if list is full
+        log.info("Adding node in client list...");
         if (this.clientList.size() >= this.maximumSize) {
+            log.info("The client list is full.");
             return false;
         }
         for (int i=0; i<this.clientList.size(); i++) {
             if (this.getClosest(this.clientList.get(i), node)) {
                 this.clientList.add(i, node);
+                log.info("Node added.");
                 return true;
             }
         }
         this.clientList.add(node);
+        log.info("Node added.");
         return true;
     }
 

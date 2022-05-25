@@ -1,15 +1,15 @@
 package toxcore.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import lombok.extern.slf4j.Slf4j;
 import toxcore.dht.DHT;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Date;
 
+@Slf4j
 public class Node {
 
     private final DHT dht;
@@ -90,41 +90,34 @@ public class Node {
     }
 
     /**
-     * Prepare data for packaging.
-     * @return Raw data into packed node format.
-     */
-    public byte[] prepareRawData() {
-        int lengthAddress = (this.nodeAddress instanceof Inet4Address) ? Network.SIZE_IP4 : Network.SIZE_IP6;
-        int addressFamily = (this.nodeAddress instanceof Inet4Address) ? Network.PEAR_AF_INET : Network.PEAR_AF_INET6;
-        return ByteBuffer.allocate(1+7+lengthAddress+2+32)
-                .put((byte)0) // Only UDP for now
-                .put((byte)addressFamily)
-                .put(this.nodeAddress.getAddress())
-                .put((byte)this.port)
-                .put(this.nodeKey)
-                .array();
-    }
-
-    /**
      * Tell if a node is alive.
      * @return True if the node is alive, false either.
      */
     public boolean isAlive() {
+        log.info("Testig if this node is alive...");
         if (!this.nodeAddress.isAnyLocalAddress()) {
+            log.info("It is a local node (probably me)!");
             return false;
         } else {
+            log.info("Preparing a ping...");
             byte[] pingId = new byte[Network.ID_LENGTH];
             new SecureRandom().nextBytes(pingId);
             Ping ping = new Ping(this, pingId);
+            log.info("Ping prepared.");
             try {
+                log.info("Sending the ping...");
                 ping.send(PacketType.REQUEST);
+                log.info("Ping sent.");
+                log.info("Waiting for response...");
                 while (!ping.isReceived() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT);
                 if (!ping.isReceived()) {
+                    log.info("Ping timeout.");
                     return false;
                 }
             } catch (SodiumLibraryException e) {
                 e.printStackTrace(); // Should never happen
             }
+            log.info("This node is alive!");
             return true;
         }
     }
