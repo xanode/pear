@@ -1,9 +1,5 @@
 package toxcore.dht.network;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -14,9 +10,8 @@ import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import toxcore.dht.DHT;
-import toxcore.dht.network.Network;
-import toxcore.dht.network.Node;
-import toxcore.dht.network.Ping;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Ping Test")
 class PingTest {
@@ -52,7 +47,7 @@ class PingTest {
         byte[] pingId = generateRandomId();
         Ping ping = new Ping(node, pingId);
 
-        assertTrue(ping.equals(ping));
+        assertEquals(ping, ping);
     }
 
     @Test
@@ -64,7 +59,7 @@ class PingTest {
         Ping ping1 = new Ping(node, pingId);
         Ping ping2 = new Ping(node, pingId);
 
-        assertTrue(ping1.equals(ping2));
+        assertEquals(ping1, ping2);
     }
 
     @Test
@@ -75,7 +70,7 @@ class PingTest {
         Ping ping1 = new Ping(node, generateRandomId());
         Ping ping2 = new Ping(node, generateRandomId());
 
-        assertFalse(ping1.equals(ping2));
+        assertNotEquals(ping1, ping2);
     }
 
     @Test
@@ -86,7 +81,7 @@ class PingTest {
         Ping ping1 = new Ping(generateIPv4Node(), pingId);
         Ping ping2 = new Ping(generateIPv4Node(), pingId);
 
-        assertFalse(ping1.equals(ping2));
+        assertNotEquals(ping1, ping2);
     }
 
     @Test
@@ -95,7 +90,7 @@ class PingTest {
         Ping ping1 = new Ping(generateIPv4Node(), generateRandomId());
         Ping ping2 = new Ping(generateIPv4Node(), generateRandomId());
 
-        assertFalse(ping1.equals(ping2));
+        assertNotEquals(ping1, ping2);
     }
 
     // ============================================================
@@ -103,7 +98,7 @@ class PingTest {
     // ============================================================
     Node generateIPv4Node() throws SodiumLibraryException, UnknownHostException {
         byte[] randomInetAddress = new byte[Network.SIZE_IP4];
-        Node node = null;
+        Node node;
 
         rd.nextBytes(randomInetAddress);
         randomInetAddress[0] = (byte) (rd.nextInt(224) + 1); // Force the address not to be a multicast address
@@ -119,7 +114,7 @@ class PingTest {
 
     Node generateIPv6Node() throws SodiumLibraryException, UnknownHostException {
         byte[] randomInetAddress = new byte[Network.SIZE_IP6];
-        Node node = null;
+        Node node;
 
         rd.nextBytes(randomInetAddress);
         randomInetAddress[0] = (byte) (rd.nextInt(240) + 1); // Force the address not to be a multicast address
@@ -134,7 +129,7 @@ class PingTest {
     }
 
     byte[] generateRandomId() {
-        byte[] randomId = new byte[Network.PING_ID_LENGTH];
+        byte[] randomId = new byte[Network.ID_LENGTH];
         rd.nextBytes(randomId);
 
         return randomId;
