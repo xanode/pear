@@ -1,5 +1,7 @@
 package fr.xanode.pear.core.dht.network;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.DHT;
 import fr.xanode.pear.core.dht.async.AsyncTask;
@@ -9,17 +11,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
+@RequiredArgsConstructor
 public class PacketManagementTask implements AsyncTask<Callable<?>> {
 
-    private final byte[] data;
-    private final DHT dht;
-    private final ConcurrentHashMap<byte[], Callable<?>> trackingSentPackets;
-
-    PacketManagementTask(DHT dht, byte[] data, ConcurrentHashMap<byte[], Callable<?>> trackingSentPackets) {
-        this.dht = dht;
-        this.data = data;
-        this.trackingSentPackets = trackingSentPackets;
-    }
+    @NonNull private final DHT dht;
+    @NonNull private final byte[] data;
+    @NonNull private final ConcurrentHashMap<byte[], Callable<?>> trackingSentPackets;
 
     @Override
     public void onPreCall() {
