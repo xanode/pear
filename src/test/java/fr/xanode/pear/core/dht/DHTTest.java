@@ -22,7 +22,7 @@ class DHTTest {
     @DisplayName("Test that the public key is the right size.") // Stupid test, but it's a start.
     void testPublicKeySize() throws SodiumLibraryException {
         DHT dht = new DHT();
-        assertEquals(dht.getPublicKey().length, DHT.CRYPTO_PUBLIC_KEY_SIZE);
+        assertEquals(dht.getPublicKey().length, DHT.CRYPTO_KEY_SIZE);
     }
 
     @Test

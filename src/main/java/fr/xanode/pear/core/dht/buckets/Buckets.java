@@ -10,13 +10,13 @@ import java.util.BitSet;
 public class Buckets {
 
     private final Node baseNode;
-    private KBucket[] buckets;
+    private final KBucket[] buckets;
 
     public Buckets(final Node baseNode, int size) {
         this.baseNode = baseNode;
         this.buckets = new KBucket[size]; // Size should be 256 because there are 256 bits keys
         for (int i=0; i<size; i++) {
-            this.buckets[i] = new KBucket(DHT.CRYPTO_PUBLIC_KEY_SIZE);
+            this.buckets[i] = new KBucket(DHT.CRYPTO_KEY_SIZE);
         }
     }
 
@@ -29,7 +29,7 @@ public class Buckets {
         BitSet nodeBitSet = BitSet.valueOf(node.getNodeKey());
         nodeBitSet.xor(BitSet.valueOf(this.baseNode.getNodeKey()));
         int i;
-        for (i=(8 * DHT.CRYPTO_PUBLIC_KEY_SIZE - 1); i>=0; i--) { // 256 bits key
+        for (i=(8 * DHT.CRYPTO_KEY_SIZE - 1); i>=0; i--) { // 256 bits key
             if (nodeBitSet.get(i)) {
                 break;
             }

@@ -57,12 +57,12 @@ public class Packet {
         this.senderPublicKey = Arrays.copyOfRange(
                 data,
                 Network.PACKET_TYPE_LENGTH,
-                DHT.CRYPTO_PUBLIC_KEY_SIZE
+                DHT.CRYPTO_KEY_SIZE
         );
         this.nonce = Arrays.copyOfRange(
                 data,
-                Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE,
-                Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE
+                Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_KEY_SIZE,
+                Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE
         );
         log.info("Decrypting payload...");
         byte[] packetPayload = dht.decrypt(
@@ -70,7 +70,7 @@ public class Packet {
                 this.nonce,
                 Arrays.copyOfRange(
                         data,
-                        Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE,
+                        Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE,
                         data.length
                 )
         );
@@ -141,7 +141,7 @@ public class Packet {
 
         log.info("Packet " + Arrays.toString(this.identifier) + " transformed into a byte array (just before return).");
 
-        return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_PUBLIC_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE + encryptedPayload.length)
+        return ByteBuffer.allocate(Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_KEY_SIZE + DHT.CRYPTO_NONCE_SIZE + encryptedPayload.length)
                 .put(type)
                 .put(receiverPublicKey)
                 .put(nonce)

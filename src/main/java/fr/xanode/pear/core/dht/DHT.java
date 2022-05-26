@@ -17,8 +17,7 @@ public class DHT {
 
     // Constants
     // Crypto-related constants
-    public static final byte CRYPTO_PUBLIC_KEY_SIZE = 32;
-    public static final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
+    public static final byte CRYPTO_KEY_SIZE = 32;
     public static final byte CRYPTO_NONCE_SIZE = 24;
 
     @Getter private final byte[] publicKey;
@@ -59,7 +58,7 @@ public class DHT {
                 Network.PING_PORT
         );
         log.info("Homomorphic node created.");
-        this.buckets = new Buckets(node, 8 * CRYPTO_PUBLIC_KEY_SIZE); // Size in Buckets is the number of bits in the public key
+        this.buckets = new Buckets(node, 8 * CRYPTO_KEY_SIZE); // Size in Buckets is the number of bits in the public key
         log.info("Buckets initialized.");
 
         // Initialize network
