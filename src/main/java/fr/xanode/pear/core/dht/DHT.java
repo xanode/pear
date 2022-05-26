@@ -9,6 +9,7 @@ import com.sun.jna.Platform;
 import fr.xanode.pear.core.dht.buckets.Buckets;
 import fr.xanode.pear.core.dht.network.Network;
 import fr.xanode.pear.core.dht.network.Node;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,10 +21,10 @@ public class DHT {
     public static final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
     public static final byte CRYPTO_NONCE_SIZE = 24;
 
-    private final byte[] publicKey;
+    @Getter private final byte[] publicKey;
     private final byte[] privateKey;
-    private Buckets buckets;
-    private Network network;
+    private final Buckets buckets;
+    @Getter private final Network network;
 
     public DHT() throws SodiumLibraryException {
         // Load libsodium library
@@ -65,22 +66,6 @@ public class DHT {
         log.info("Initialize network...");
         this.network = new Network(this);
         log.info("Network initialized.");
-    }
-
-    /**
-     * Get the public key of the DHT
-     * @return the public key of the DHT
-     */
-    public byte[] getPublicKey() {
-        return this.publicKey;
-    }
-
-    /**
-     * Get the network instance of the DHT
-     * @return the network instance of the DHT
-     */
-    public Network getNetwork() {
-        return this.network;
     }
 
     /**
