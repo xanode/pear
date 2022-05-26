@@ -2,39 +2,25 @@ package fr.xanode.pear.core.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import fr.xanode.pear.core.dht.DHT;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 @Slf4j
-@Getter
+@Getter @RequiredArgsConstructor @EqualsAndHashCode
 public class Packet {
 
-    private final PacketType type;
-    private final RPCService service;
-    private final byte[] senderPublicKey;
-    private final byte[] nonce;
-    private final byte[] identifier;
-    private final byte[] payload;
-
-    /**
-     * Create a packet instance from packet information
-     * @param type The packet type
-     * @param senderPublicKey The sender's public key
-     * @param nonce The nonce
-     * @param identifier The packet identifier
-     * @param payload The packet payload
-     */
-    public Packet(PacketType type, RPCService service, byte[] senderPublicKey, byte[] nonce, byte[] identifier, byte[] payload) {
-        this.type = type;
-        this.service = service;
-        this.senderPublicKey = senderPublicKey;
-        this.nonce = nonce;
-        this.identifier = identifier;
-        this.payload = payload;
-    }
+    @NonNull private final PacketType type;
+    @NonNull private final RPCService service;
+    @NonNull private final byte[] senderPublicKey;
+    @NonNull private final byte[] nonce;
+    @NonNull private final byte[] identifier;
+    @NonNull private final byte[] payload;
 
     /**
      * Create a packet instance from a real packet received from the network.
@@ -159,35 +145,5 @@ public class Packet {
      */
     public byte[] toByteArray(DHT dht) throws SodiumLibraryException {
         return this.toByteArray(dht, this.senderPublicKey);
-    }
-
-    /**
-     * Tell if the packet equals another object.
-     * @param o The object to compare
-     * @return true if the object equals the packet, false otherwise
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Packet other)) return false;
-        return this.type == other.getType()
-                && this.service == other.getService()
-                && this.senderPublicKey == other.senderPublicKey
-                && this.identifier == other.identifier
-                && this.payload == other.getPayload();
-    }
-
-    /**
-     * Compute the hash code of the packet.
-     * @return the hash code of the packet
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.senderPublicKey == null) ? 0 : Arrays.hashCode(this.senderPublicKey));
-        result = prime * result + ((this.identifier == null) ? 0 : Arrays.hashCode(this.identifier));
-        result = prime * result + ((this.payload == null) ? 0 : Arrays.hashCode(this.payload));
-        return result;
     }
 }
