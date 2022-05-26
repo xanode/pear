@@ -11,7 +11,6 @@ import java.util.Random;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
-import fr.xanode.pear.core.dht.buckets.ClientList;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import fr.xanode.pear.core.dht.DHT;

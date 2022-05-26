@@ -1,7 +1,5 @@
 package fr.xanode.pear.core.dht.async;
 
-import fr.xanode.pear.core.dht.async.AsyncTask;
-import fr.xanode.pear.core.dht.async.AsynchronousService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

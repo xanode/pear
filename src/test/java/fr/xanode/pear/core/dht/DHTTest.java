@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.muquit.libsodiumjna.SodiumLibrary;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
-import fr.xanode.pear.core.dht.DHT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
