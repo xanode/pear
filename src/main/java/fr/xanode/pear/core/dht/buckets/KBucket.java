@@ -1,20 +1,19 @@
 package fr.xanode.pear.core.dht.buckets;
 
 import fr.xanode.pear.core.dht.network.Node;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 
 @Slf4j
+@Getter @RequiredArgsConstructor
 public class KBucket {
 
-    private final int k;
-    private final ArrayList<Node> bucket;
-
-    KBucket(final int k) {
-        this.k = k; // Original paper advise 20
-        this.bucket = new ArrayList<>();
-    }
+    @NonNull private final int k; // Original paper advise 20
+    private final ArrayList<Node> bucket = new ArrayList<>();
 
     /**
      * Update this KBucket with a new node.
@@ -57,22 +56,6 @@ public class KBucket {
      */
     public int getSize() {
         return this.bucket.size();
-    }
-
-    /**
-     * Get k-length of the KBucket.
-     * @return The k-length of the KBucket.
-     */
-    protected int getK() {
-        return this.k;
-    }
-
-    /**
-     * Return the ArrayList to be able to iterate over the KBucket.
-     * @return The ArrayList of the KBucket.
-     */
-    public ArrayList<Node> toArrayList() {
-        return this.bucket;
     }
 
     /**

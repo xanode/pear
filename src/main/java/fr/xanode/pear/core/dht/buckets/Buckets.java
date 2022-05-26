@@ -55,7 +55,7 @@ public class Buckets {
         // Use getClosestTo with the base node as parameter?
         ClientList closest = new ClientList(max, this.baseNode);
         for (KBucket bucket: this.buckets) {
-            for (Node node: bucket.toArrayList()) {
+            for (Node node: bucket.getBucket()) {
                 if (!closest.add(node)) {
                     break;
                 }
@@ -72,7 +72,7 @@ public class Buckets {
      */
     public ClientList getClosestTo(Node node, int max) {
         ClientList closest = new ClientList(max, node);
-        for (Node currentNode: this.buckets[this.bucketIndex(node)].toArrayList()) { // TODO: If there is nothing in that bucket?
+        for (Node currentNode: this.buckets[this.bucketIndex(node)].getBucket()) { // TODO: If there is nothing in that bucket?
             if (!closest.add(currentNode)) {
                 break;
             }

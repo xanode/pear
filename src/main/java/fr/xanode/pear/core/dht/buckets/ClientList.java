@@ -1,24 +1,22 @@
 package fr.xanode.pear.core.dht.buckets;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.network.Node;
 
 import java.util.ArrayList;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ClientList {
 
-    private final int maximumSize;
-    private final Node baseNode;
-    private ArrayList<Node> clientList;
+    @Getter @NonNull private final int maximumSize;
+    @Getter @NonNull private final Node baseNode;
+    private final ArrayList<Node> clientList = new ArrayList<>();
 
     protected static final int CLIENT_LIST_SIZE = 32;
-
-    ClientList(final int maximumSize, final Node baseNode) {
-        this.maximumSize = maximumSize; // Should be set to 32
-        this.baseNode = baseNode;
-        this.clientList = new ArrayList<>();
-    }
 
     /**
      * Add a given node in the client list, sorted by proximity to the base node.
@@ -63,14 +61,6 @@ public class ClientList {
     }
 
     /**
-     * Get the maximum size of the client list.
-     * @return The maximum size of the list.
-     */
-    public int getMaximumSize() {
-        return this.maximumSize;
-    }
-
-    /**
      * Indicates which of the node is closer to the base node.
      * @param node1 First node.
      * @param node2 Second node.
@@ -91,14 +81,6 @@ public class ClientList {
             }
         }
         return false;
-    }
-
-    /**
-     * Get the base node.
-     * @return The base node.
-     */
-    public Node getBaseNode() {
-        return this.baseNode;
     }
 
     /**
