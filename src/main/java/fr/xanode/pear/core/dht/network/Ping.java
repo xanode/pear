@@ -78,8 +78,8 @@ public class Ping implements Callable<Integer> {
      * Check if the ping has been received.
      * @return true if the ping has been received
      */
-    public boolean isReceived() {
-        return receivedDate != null;
+    public boolean isPending() {
+        return receivedDate == null;
     }
 
     /**

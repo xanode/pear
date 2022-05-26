@@ -109,14 +109,14 @@ public class Node {
                 ping.send(PacketType.REQUEST);
                 log.info("Ping sent.");
                 log.info("Waiting for response...");
-                while (!ping.isReceived() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT) {
+                while (ping.isPending() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT) {
                     try {
                         this.wait(100); // Wait 100ms
                     } catch (InterruptedException e) {
                         log.warn("Interrupted while waiting for ping response: " + e.getMessage());
                     }
                 }
-                if (!ping.isReceived()) {
+                if (ping.isPending()) {
                     log.info("Ping timeout.");
                     return false;
                 }
