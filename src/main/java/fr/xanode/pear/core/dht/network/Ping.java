@@ -1,56 +1,23 @@
 package fr.xanode.pear.core.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
 @Slf4j
+@Getter @RequiredArgsConstructor @EqualsAndHashCode
 public class Ping implements Callable<Integer> {
 
-    private final Node node;
-    private final byte[] pingId;
+    @NonNull private final Node node;
+    @NonNull private final byte[] pingId;
     private Date sentDate;
     private Date receivedDate;
-
-    public Ping(final Node node, final byte[] pingId) {
-        this.node = node;
-        this.pingId = pingId;
-    }
-
-    /**
-     * Get the node associated with this ping.
-     * @return the node
-     */
-    public Node getNode() {
-        return node;
-    }
-
-    /**
-     * Get the ping ID.
-     * @return the ping ID
-     */
-    public byte[] getPingId() {
-        return pingId;
-    }
-
-    /**
-     * Get the date this ping was sent.
-     * @return the sent date
-     */
-    public Date getSentDate() {
-        return sentDate;
-    }
-
-    /**
-     * Get the date this ping was received.
-     * @return the received date
-     */
-    public Date getReceivedDate() {
-        return receivedDate;
-    }
 
     /**
      * Set the received date.
@@ -88,33 +55,6 @@ public class Ping implements Callable<Integer> {
      */
     public boolean isExpired() {
         return receivedDate != null && receivedDate.getTime() < sentDate.getTime() + Network.PING_TIMEOUT;
-    }
-
-    /**
-     * Tell if the ping equals another object.
-     * @param o the object to compare
-     * @return true if the object equals the ping, false otherwise
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Ping ping = (Ping) o;
-
-        if (!node.equals(ping.node)) return false;
-        return Arrays.equals(pingId, ping.pingId);
-    }
-
-    /**
-     * Compute the hash code of the ping.
-     * @return the hash code of the ping
-     */
-    @Override
-    public int hashCode() {
-        int result = node.hashCode();
-        result = 31 * result + (pingId != null ? Arrays.hashCode(pingId) : 0);
-        return result;
     }
 
     /**
