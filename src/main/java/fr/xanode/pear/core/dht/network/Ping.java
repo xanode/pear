@@ -75,7 +75,7 @@ public class Ping implements Callable<Integer> {
         log.info("Packet created.");
         log.info("Sending...");
         this.node
-                .getDHT()
+                .getDht()
                 .getNetwork()
                 .sendPacket(packet, this.node, this);
         log.info("Sended.");
