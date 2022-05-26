@@ -87,7 +87,7 @@ public class Ping implements Callable<Integer> {
      * @return true if the ping has expired
      */
     public boolean isExpired() {
-        return receivedDate != null && receivedDate.getTime() < sentDate.getTime() + 100e3; // 100s timeout should be replaced by a constant
+        return receivedDate != null && receivedDate.getTime() < sentDate.getTime() + Network.PING_TIMEOUT;
     }
 
     /**
