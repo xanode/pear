@@ -20,8 +20,6 @@ public class DHT {
     public static final byte CRYPTO_PRIVATE_KEY_SIZE = 32;
     public static final byte CRYPTO_NONCE_SIZE = 24;
 
-    // Attributes
-    private final String libraryPath;
     private final byte[] publicKey;
     private final byte[] privateKey;
     private Buckets buckets;
@@ -30,14 +28,16 @@ public class DHT {
     public DHT() throws SodiumLibraryException {
         // Load libsodium library
         log.info("Loading libsodium library...");
+        // Attributes
+        String libraryPath;
         if (Platform.isWindows()) {
-            this.libraryPath = "C:/libsodium/libsodium.dll";
+            libraryPath = "C:/libsodium/libsodium.dll";
         } else if (Platform.isMac()) {
-            this.libraryPath = "/usr/local/lib/libsodium.dylib";
+            libraryPath = "/usr/local/lib/libsodium.dylib";
         } else {
-            this.libraryPath = "/usr/lib64/libsodium.so.23"; // TODO: the right place depend on the distro
+            libraryPath = "/usr/lib64/libsodium.so.23"; // TODO: the right place depend on the distro
         }
-        SodiumLibrary.setLibraryPath(this.libraryPath);
+        SodiumLibrary.setLibraryPath(libraryPath);
         log.info("libsodium library loaded.");
 
         // Generate keys
@@ -135,6 +135,10 @@ public class DHT {
         return this.buckets.isInsertable(node);
     }
 
+    /**
+     * Add a node in the buckets.
+     * @param node The node to add.
+     */
     public void addNode(Node node) {
         this.buckets.update(node);
     }

@@ -10,7 +10,7 @@ import java.net.SocketException;
 public class Main {
     public static void main(String[] args) throws SocketException, SodiumLibraryException {
         DHT dht = new DHT();
-        Signal.handle(new Signal("INT"), signal -> dht.getNetwork().close()); // Close DHT when interrupted byt SIGINT
+        Signal.handle(new Signal("INT"), signal -> dht.getNetwork().close()); // Close DHT when interrupted by SIGINT
         dht.getNetwork().handle();
     }
 }
