@@ -2,12 +2,14 @@ package fr.xanode.pear.core.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import fr.xanode.pear.core.dht.DHT;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 @Slf4j
+@Getter
 public class Packet {
 
     private final PacketType type;
@@ -157,54 +159,6 @@ public class Packet {
      */
     public byte[] toByteArray(DHT dht) throws SodiumLibraryException {
         return this.toByteArray(dht, this.senderPublicKey);
-    }
-
-    /**
-     * Get the packet type.
-     * @return The packet type
-     */
-    public PacketType getType() {
-        return this.type;
-    }
-
-    /**
-     * Get the packet service.
-     * @return The packet service.
-     */
-    public RPCService getService() {
-        return this.service;
-    }
-
-    /**
-     * Get the sender's public key.
-     * @return The sender's public key
-     */
-    public byte[] getSenderPublicKey() {
-        return this.senderPublicKey;
-    }
-
-    /**
-     * Get the packet's nonce.
-     * @return The packet's nonce
-     */
-    public byte[] getNonce() {
-        return this.nonce;
-    }
-
-    /**
-     * Get the packet's identifier.
-     * @return The packet's identifier
-     */
-    public byte[] getIdentifier() {
-        return this.identifier;
-    }
-
-    /**
-     * Get the packet's payload.
-     * @return The packet's payload
-     */
-    public byte[] getPayload() {
-        return this.payload;
     }
 
     /**
