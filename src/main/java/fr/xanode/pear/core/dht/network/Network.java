@@ -1,6 +1,8 @@
 package fr.xanode.pear.core.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.async.AsynchronousService;
 import fr.xanode.pear.core.dht.DHT;
@@ -14,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @Slf4j
+@RequiredArgsConstructor
 public class Network {
 
     // Constants
@@ -35,15 +38,11 @@ public class Network {
     public static final int PING_TIMEOUT = 10000; // ms
 
     // Attributes
-    public final DHT dht;
+    @NonNull public final DHT dht;
     protected DatagramSocket pingSocket;
     private boolean running;
-    private ConcurrentHashMap <byte[], Callable<?>> trackingSentPacket; // byte[] is the packet identifier
+    private final ConcurrentHashMap <byte[], Callable<?>> trackingSentPacket = new ConcurrentHashMap<>(); // byte[] is the packet identifier
 
-    public Network(DHT dht) {
-        this.dht = dht;
-        this.trackingSentPacket = new ConcurrentHashMap<>();
-    }
 
     /**
      * Handle received packets.
