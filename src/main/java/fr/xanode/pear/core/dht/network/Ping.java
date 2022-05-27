@@ -68,9 +68,8 @@ public class Ping implements Callable<Integer> {
                 type,
                 RPCService.PING,
                 this.node.getNodeKey(),
-                null,
                 this.pingId,
-                null
+                new byte[0] // A ping packet has an empty payload
         );
         log.info("Packet created.");
         log.info("Sending...");
