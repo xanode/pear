@@ -63,7 +63,7 @@ public class Network {
                 log.info("Packet received!");
                 service.execute(new PacketManagementTask(this.dht, receivedPacket.getData(), this.trackingSentPacket));
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warn(e.getMessage());
             }
         }
         log.info("Closing asynchronous service...");
