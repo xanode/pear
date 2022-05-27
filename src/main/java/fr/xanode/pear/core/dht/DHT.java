@@ -55,7 +55,7 @@ public class DHT {
                 this,
                 this.publicKey,
                 InetAddress.getLoopbackAddress(),
-                Network.PING_PORT
+                Network.DHT_PORT
         );
         log.info("Homomorphic node created.");
         this.buckets = new Buckets(node, 8 * CRYPTO_KEY_SIZE); // Size in Buckets is the number of bits in the public key

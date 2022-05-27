@@ -34,7 +34,7 @@ public class Network {
     public static final int MAX_UDP_PACKET_SIZE = 65536;
     // Ping related constants
     public static final int ID_LENGTH = 8;
-    public static final int PING_PORT = 33445;
+    public static final int DHT_PORT = 33445;
     public static final int PING_TIMEOUT = 10000; // ms
 
     // Attributes
@@ -49,7 +49,7 @@ public class Network {
      */
     public void handle() throws SocketException {
         log.info("Starting network service...");
-        this.pingSocket = new DatagramSocket(PING_PORT);
+        this.pingSocket = new DatagramSocket(DHT_PORT);
         log.info("Creating asynchronous service...");
         var service = new AsynchronousService(new LinkedBlockingDeque<>());
         log.info("Asynchronous service created.");
