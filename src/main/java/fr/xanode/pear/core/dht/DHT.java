@@ -4,6 +4,7 @@ import java.net.InetAddress;
 
 import com.muquit.libsodiumjna.SodiumKeyPair;
 import com.muquit.libsodiumjna.SodiumLibrary;
+import com.muquit.libsodiumjna.SodiumUtils;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.Platform;
 import fr.xanode.pear.core.dht.buckets.Buckets;
@@ -46,6 +47,7 @@ public class DHT {
         this.publicKey = keyPair.getPublicKey();
         this.privateKey = keyPair.getPrivateKey();
         log.info("Key pair generated.");
+        log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey));
 
         // Initialize buckets
         log.info("Initialize buckets...");
