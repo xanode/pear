@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -61,7 +62,7 @@ public class Network {
                 log.info("Waiting for packets...");
                 this.pingSocket.receive(receivedPacket);
                 log.info("Packet received!");
-                service.execute(new PacketManagementTask(this.dht, receivedPacket.getData(), this.trackingSentPacket));
+                service.execute(new PacketManagementTask(this.dht, Arrays.copyOfRange(receivedPacket.getData(), 0, receivedPacket.getLength()), this.trackingSentPacket));
             } catch (IOException e) {
                 log.warn(e.getMessage());
             }
