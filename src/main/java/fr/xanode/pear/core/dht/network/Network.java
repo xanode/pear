@@ -62,7 +62,15 @@ public class Network {
                 log.info("Waiting for packets...");
                 this.pingSocket.receive(receivedPacket);
                 log.info("Packet received!");
-                service.execute(new PacketManagementTask(this.dht, Arrays.copyOfRange(receivedPacket.getData(), 0, receivedPacket.getLength()), this.trackingSentPacket));
+                service.execute(new PacketManagementTask(
+                        this.dht,
+                        Arrays.copyOfRange(receivedPacket.getData(),
+                                0,
+                                receivedPacket.getLength()
+                        ),
+                        receivedPacket.getAddress(),
+                        this.trackingSentPacket
+                ));
             } catch (IOException e) {
                 log.warn(e.getMessage());
             }
@@ -100,7 +108,11 @@ public class Network {
             byte[] data = packet.toByteArray(this.dht);
             this.pingSocket.send(new DatagramPacket(data, data.length, receiver.getNodeAddress(), receiver.getPort()));
             // Register it to handle response
-            this.trackingSentPacket.put(packet.getIdentifier(), callback);
+            if (callback == null) {
+                this.trackingSentPacket.remove(packet.getIdentifier());
+            } else {
+                this.trackingSentPacket.put(packet.getIdentifier(), callback);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
