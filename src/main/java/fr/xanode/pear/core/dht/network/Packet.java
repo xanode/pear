@@ -41,11 +41,11 @@ public class Packet {
          * - Identifier (8 bytes)
          * - Payload
          */
-        log.info("Decoding packet...");
+        log.info("Decoding packet (length: " + data.length + ")...");
         this.senderPublicKey = Arrays.copyOfRange(
                 data,
                 Network.PACKET_TYPE_LENGTH,
-                DHT.CRYPTO_KEY_SIZE
+                Network.PACKET_TYPE_LENGTH + DHT.CRYPTO_KEY_SIZE
         );
         byte[] nonce = Arrays.copyOfRange(
                 data,
