@@ -1,12 +1,12 @@
 package fr.xanode.pear.core.dht.network;
 
+import com.muquit.libsodiumjna.SodiumUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.DHT;
 import fr.xanode.pear.core.dht.async.AsyncTask;
 
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,9 +44,9 @@ public class PacketManagementTask implements AsyncTask<Callable<?>> {
         Packet packet = new Packet(this.dht, this.data);
         switch(packet.getType()) {
             case REQUEST -> // TODO: Add the node in buckets and answer
-                    log.info("Managing a request from " + Arrays.toString(packet.getSenderPublicKey()));
+                    log.info("Managing a request from " + SodiumUtils.binary2Hex(packet.getSenderPublicKey()));
             case RESPONSE -> {
-                log.info("Managing a response from " + Arrays.toString(packet.getSenderPublicKey()));
+                log.info("Managing a response from " + SodiumUtils.binary2Hex(packet.getSenderPublicKey()));
                 return this.trackingSentPackets.get(packet.getIdentifier());
             }
         }
