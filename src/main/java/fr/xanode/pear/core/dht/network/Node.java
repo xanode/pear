@@ -35,37 +35,56 @@ public class Node {
      * @return True if the node is alive, false either.
      */
     public boolean isAlive() {
-        log.info("Testig if this node is alive...");
-        if (!this.nodeAddress.isAnyLocalAddress()) {
-            log.info("It is a local node (probably me)!");
-            return false;
-        } else {
-            log.info("Preparing a ping...");
-            byte[] pingId = new byte[Network.ID_LENGTH];
-            new SecureRandom().nextBytes(pingId);
-            Ping ping = new Ping(this, pingId);
-            log.info("Ping prepared.");
+        log.info("Testing if this node is alive...");
+        int counter = 1;
+        while (this.dht.getNetwork().pingSocket == null && counter < 21) { // Check if we can send packets through network
             try {
-                log.info("Sending the ping...");
-                ping.send(PacketType.REQUEST);
-                log.info("Ping sent.");
-                log.info("Waiting for response...");
-                while (ping.isPending() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT) {
-                    try {
-                        this.wait(100); // Wait 100ms
-                    } catch (InterruptedException e) {
-                        log.warn("Interrupted while waiting for ping response: " + e.getMessage());
-                    }
+                log.error("Socket is still not open! Waiting 100ms (" + counter + "/20)...");
+                synchronized (this) {
+                    this.wait(100);
                 }
-                if (ping.isPending()) {
-                    log.info("Ping timeout.");
-                    return false;
-                }
-            } catch (SodiumLibraryException e) {
-                e.printStackTrace(); // Should never happen
+                counter++;
+            } catch (InterruptedException e) {
+                log.warn("Interrupted while waiting for socket to be opened: " + e.getMessage());
             }
-            log.info("This node is alive!");
-            return true;
         }
+        if (this.dht.getNetwork().pingSocket == null) { // If we can't, abort
+            log.error("Socket is still not open. Aborting.");
+        } else { // Otherwise, let's go!
+            if (this.nodeAddress.isAnyLocalAddress()) {
+                log.info("It is a local node (probably me)!");
+                return false;
+            } else {
+                log.info("Preparing a ping...");
+                byte[] pingId = new byte[Network.ID_LENGTH];
+                new SecureRandom().nextBytes(pingId);
+                Ping ping = new Ping(this, pingId);
+                log.info("Ping prepared.");
+                try {
+                    log.info("Sending the ping...");
+                    ping.send(PacketType.REQUEST); // Send ping
+                    log.info("Ping sent.");
+                    log.info("Waiting for response...");
+                    while (ping.isPending() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT) { // Waiting for response
+                        try {
+                            synchronized (this) {
+                                this.wait(100); // Wait 100ms
+                            }
+                        } catch (InterruptedException e) {
+                            log.warn("Interrupted while waiting for ping response: " + e.getMessage());
+                        }
+                    }
+                    if (ping.isPending()) {
+                        log.info("Ping timeout.");
+                        return false;
+                    }
+                } catch (SodiumLibraryException e) {
+                    e.printStackTrace(); // Should never happen
+                }
+                log.info("This node is alive!");
+                return true;
+            }
+        }
+        return false;
     }
 }
