@@ -51,39 +51,34 @@ public class Node {
         if (this.dht.getNetwork().pingSocket == null) { // If we can't, abort
             log.error("Socket is still not open. Aborting.");
         } else { // Otherwise, let's go!
-            if (this.nodeAddress.isAnyLocalAddress()) {
-                log.info("It is a local node (probably me)!");
-                return false;
-            } else {
-                log.info("Preparing a ping...");
-                byte[] pingId = new byte[Network.ID_LENGTH];
-                new SecureRandom().nextBytes(pingId);
-                Ping ping = new Ping(this, pingId);
-                log.info("Ping prepared.");
-                try {
-                    log.info("Sending the ping...");
-                    ping.send(PacketType.REQUEST); // Send ping
-                    log.info("Ping sent.");
-                    log.info("Waiting for response...");
-                    while (ping.isPending() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT) { // Waiting for response
-                        try {
-                            synchronized (this) {
-                                this.wait(100); // Wait 100ms
-                            }
-                        } catch (InterruptedException e) {
-                            log.warn("Interrupted while waiting for ping response: " + e.getMessage());
+            log.info("Preparing a ping...");
+            byte[] pingId = new byte[Network.ID_LENGTH];
+            new SecureRandom().nextBytes(pingId);
+            Ping ping = new Ping(this, pingId);
+            log.info("Ping prepared.");
+            try {
+                log.info("Sending the ping...");
+                ping.send(PacketType.REQUEST); // Send ping
+                log.info("Ping sent.");
+                log.info("Waiting for response...");
+                while (ping.isPending() && ((new Date()).getTime() - ping.getSentDate().getTime()) < Network.PING_TIMEOUT) { // Waiting for response
+                    try {
+                        synchronized (this) {
+                            this.wait(100); // Wait 100ms
                         }
+                    } catch (InterruptedException e) {
+                        log.warn("Interrupted while waiting for ping response: " + e.getMessage());
                     }
-                    if (ping.isPending()) {
-                        log.info("Ping timeout.");
-                        return false;
-                    }
-                } catch (SodiumLibraryException e) {
-                    e.printStackTrace(); // Should never happen
                 }
-                log.info("This node is alive!");
-                return true;
+                if (ping.isPending()) {
+                    log.info("Ping timeout.");
+                    return false;
+                }
+            } catch (SodiumLibraryException e) {
+                e.printStackTrace(); // Should never happen
             }
+            log.info("This node is alive!");
+            return true;
         }
         return false;
     }
