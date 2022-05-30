@@ -54,7 +54,7 @@ public class DHT {
         this.privateKey = keyPair.getPrivateKey();
         log.info("Key pair generated.");
         try {
-            log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey) + "(" + InetAddress.getLocalHost().getHostAddress() + ")");
+            log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey) + " (" + InetAddress.getLocalHost().getHostAddress() + ")");
         } catch (UnknownHostException e) {
             log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey) + " (" + e.getMessage() + ")");
         }
