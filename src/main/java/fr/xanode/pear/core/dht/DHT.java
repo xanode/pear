@@ -1,6 +1,8 @@
 package fr.xanode.pear.core.dht;
 
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
 
 import com.muquit.libsodiumjna.SodiumKeyPair;
 import com.muquit.libsodiumjna.SodiumLibrary;
@@ -23,8 +25,10 @@ public class DHT {
 
     @Getter private final byte[] publicKey;
     private final byte[] privateKey;
-    private final Buckets buckets;
+    @Getter private final Buckets buckets;
     @Getter private final Network network;
+    private final CheckBucketsAgent checkBucketsAgent;
+    private final ArrayList<Thread> servicingThread = new ArrayList<>();
 
     public DHT() throws SodiumLibraryException {
         // Load libsodium library
@@ -67,6 +71,11 @@ public class DHT {
         log.info("Initialize network...");
         this.network = new Network(this);
         log.info("Network initialized.");
+
+        // Set checkBucketsAgent
+        log.info("Initialize buckets checker agent...");
+        this.checkBucketsAgent = new CheckBucketsAgent(this);
+        log.info("Buckets checker agent initialized.");
     }
 
     /**
@@ -127,5 +136,35 @@ public class DHT {
      */
     public void addNode(Node node) {
         this.buckets.update(node);
+    }
+
+    /**
+     * Start the Distributed Hash Table.
+     * @throws SocketException if network doesn't work
+     */
+    public void start() throws SocketException {
+        Thread agentThread = new Thread(this.checkBucketsAgent);
+        this.servicingThread.add(agentThread);
+        agentThread.start();
+        this.network.handle();
+    }
+
+    /**
+     * Close the Distributed Hash Table.
+     */
+    public void close() {
+        this.checkBucketsAgent.close();
+        this.network.close();
+        try {
+            for (Thread thread : this.servicingThread) {
+                if (thread.isAlive()) {
+                    log.info("Waiting on " + thread.getName() + " to close...");
+                    thread.join();
+                    log.info("Closed.");
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
