@@ -25,7 +25,7 @@ class PingTest {
 
         Ping ping = new Ping(node, pingId);
 
-        assertEquals(ping.getNode(), node);
+        assertEquals(ping.getSendingNode(), node);
         assertEquals(ping.getPingId(), pingId);
     }
 
@@ -36,7 +36,7 @@ class PingTest {
         byte[] pingId = generateRandomId();
         Ping ping = new Ping(node, pingId);
 
-        assertEquals(ping.getNode(), node);
+        assertEquals(ping.getSendingNode(), node);
         assertEquals(ping.getPingId(), pingId);
     }
 

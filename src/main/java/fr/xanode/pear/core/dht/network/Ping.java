@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
 @Getter @RequiredArgsConstructor @EqualsAndHashCode
 public class Ping implements Callable<Integer> {
 
-    @NonNull private final Node node;
+    @NonNull private final Node sendingNode;
     @NonNull private final byte[] pingId;
     private Date sentDate;
     private Date receivedDate;
@@ -67,16 +67,16 @@ public class Ping implements Callable<Integer> {
         Packet packet = new Packet(
                 type,
                 RPCService.PING,
-                this.node.getNodeKey(),
+                this.sendingNode.getNodeKey(),
                 this.pingId,
                 new byte[0] // A ping packet has an empty payload
         );
         log.info("Packet created.");
         log.info("Sending...");
-        this.node
+        this.sendingNode
                 .getDht()
                 .getNetwork()
-                .sendPacket(packet, this.node, this);
+                .sendPacket(packet, this.sendingNode, this);
         log.info("Sended.");
         this.sentDate = new Date();
         log.info("Sent date settled.");
