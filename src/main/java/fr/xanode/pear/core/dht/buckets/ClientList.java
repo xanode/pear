@@ -1,20 +1,21 @@
 package fr.xanode.pear.core.dht.buckets;
 
+import fr.xanode.pear.core.dht.DHT;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.network.Node;
 
-import java.util.ArrayList;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ClientList {
+public class ClientList implements Comparator<Node> {
 
     @Getter @NonNull private final int maximumSize;
     @Getter @NonNull private final Node baseNode;
-    private final ArrayList<Node> clientList = new ArrayList<>();
+    private final TreeSet<Node> clientList = new TreeSet<>(this); // TODO: not thread-safe
 
     protected static final int CLIENT_LIST_SIZE = 32;
 
@@ -24,19 +25,16 @@ public class ClientList {
      * @return True if it has been inserted in the list, false otherwise.
      */
     public boolean add(Node node) {
-        // TODO: A node should be added only if it is closer than the farthest node in the list.
-        // Check if list is full
         log.info("Adding node in client list...");
-        if (this.clientList.size() >= this.maximumSize) {
+        if (this.maximumSize != 0 && this.clientList.size() >= this.maximumSize) { // 0 mean no limit
             log.info("The client list is full.");
-            return false;
-        }
-        for (int i=0; i<this.clientList.size(); i++) {
-            if (this.getClosest(this.clientList.get(i), node)) {
-                this.clientList.add(i, node);
-                log.info("Node added.");
+            Node higherNode;
+            if ((higherNode = this.clientList.higher(node)) != null) { // Is the node closer than another in the client list?
+                this.clientList.remove(higherNode);
+                this.clientList.add(node);
                 return true;
             }
+            return false;
         }
         this.clientList.add(node);
         log.info("Node added.");
@@ -53,6 +51,15 @@ public class ClientList {
     }
 
     /**
+     * Tells if a greater node exists or not
+     * @param node The value to match
+     * @return the least element greater than e, or null if there is no such element.
+     */
+    public boolean existsHigher(Node node) {
+        return this.clientList.higher(node) != null;
+    }
+
+    /**
      * Get the actual size of the client list.
      * @return The size of the list.
      */
@@ -64,23 +71,22 @@ public class ClientList {
      * Indicates which of the node is closer to the base node.
      * @param node1 First node.
      * @param node2 Second node.
-     * @return True if node1 is closer to the base node, false otherwise.
+     * @return 1 if node2 is closer to the base node, 0 if both nodes are equals, -1 otherwise.
      */
-    public boolean getClosest(Node node1, Node node2) {
+    public int compare(Node node1, Node node2) {
         // TODO: Constant used below should be replaced!
         byte[] baseKey = this.baseNode.getNodeKey();
         byte[] key1 = node1.getNodeKey();
         byte[] key2 = node2.getNodeKey();
-        for (int i=0; i<32; i++) { // Big-endian format! (32 because 32 byte keys!)
-            int distanceToComparison = (baseKey[i] & 0xff) ^ (key2[i] & 0xff); // Convert to unsigned byte before xor
-            int distanceToInitial = (baseKey[i] & 0xff) ^ (key1[i] & 0xff);
-            if (distanceToComparison < distanceToInitial) {
-                return true;
-            } else if (distanceToComparison > distanceToInitial) {
-                return false;
+        for (int i=0; i< DHT.CRYPTO_KEY_SIZE; i++) { // Big-endian format! (32 because 32 byte keys!)
+            int distanceToKey2 = (baseKey[i] & 0xff) ^ (key2[i] & 0xff); // Convert to unsigned byte before xor
+            int distanceToKey1 = (baseKey[i] & 0xff) ^ (key1[i] & 0xff);
+            if (distanceToKey2 < distanceToKey1) return 1;
+            else if (distanceToKey2 > distanceToKey1) {
+                return -1;
             }
         }
-        return false;
+        return 0;
     }
 
     /**
@@ -89,6 +95,7 @@ public class ClientList {
      * @return The node to get if it exists.
      */
     public Node getNode(int index) {
-        return this.clientList.get(index);
+        List<Node> clients = this.clientList.stream().toList();
+        return clients.get(index);
     }
 }
