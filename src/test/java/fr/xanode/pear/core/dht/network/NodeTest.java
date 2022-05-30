@@ -87,7 +87,9 @@ public class NodeTest {
         // Generate random values
         byte[] publicKey = SodiumLibrary.cryptoBoxKeyPair().getPublicKey();
         this.rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (this.rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
+        while (InetAddress.getByAddress(randomInetAddress).isMulticastAddress()) { // Force the ip address not to be multicast
+            rd.nextBytes(randomInetAddress);
+        }
         int port = this.rd.nextInt(65536);
         DHT dht = new DHT(); // Necessary to initialize the Sodium library
 
@@ -132,7 +134,9 @@ public class NodeTest {
         DHT dht = new DHT(); // Necessary to initialize the Sodium library
         byte[] publicKey = SodiumLibrary.cryptoBoxKeyPair().getPublicKey();
         this.rd.nextBytes(randomInetAddress);
-        randomInetAddress[0] = (byte) (this.rd.nextInt(224) + 1); // Force the address to not be multicast (RFC 5771)
+        while (InetAddress.getByAddress(randomInetAddress).isMulticastAddress()) { // Force the ip address not to be multicast
+            rd.nextBytes(randomInetAddress);
+        }
         int port = this.rd.nextInt(65536);
 
         Node node1 = new Node(
