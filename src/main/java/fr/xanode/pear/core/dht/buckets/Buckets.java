@@ -1,8 +1,8 @@
 package fr.xanode.pear.core.dht.buckets;
 
-import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.DHT;
 import fr.xanode.pear.core.dht.network.Node;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.BitSet;
 
@@ -25,12 +25,12 @@ public class Buckets {
      * @param node The node to add.
      * @return The index of the KBucket to be filled.
      */
-    private int bucketIndex(Node node) {
+    public int bucketIndex(Node node) {
         BitSet nodeBitSet = BitSet.valueOf(node.getNodeKey());
         nodeBitSet.xor(BitSet.valueOf(this.baseNode.getNodeKey()));
         int i;
-        for (i=(8 * DHT.CRYPTO_KEY_SIZE - 1); i>=0; i--) { // 256 bits key
-            if (nodeBitSet.get(i)) {
+        for (i=(8 * DHT.CRYPTO_KEY_SIZE - 1); i>=0; i--) { // 256 bits key, we start by 256 because BitSet use little-endian representation
+            if (nodeBitSet.get(i)) { // Stop at first non-null bit
                 break;
             }
         }
@@ -72,9 +72,9 @@ public class Buckets {
      */
     public ClientList getClosestTo(Node node, int max) {
         ClientList closest = new ClientList(max, node);
-        for (Node currentNode: this.buckets[this.bucketIndex(node)].getBucket()) { // TODO: If there is nothing in that bucket?
-            if (!closest.add(currentNode)) {
-                break;
+        for (KBucket bucket: this.buckets) {
+            for (Node temp : bucket.getBucket()) {
+                closest.add(temp);
             }
         }
         return closest;
@@ -94,13 +94,20 @@ public class Buckets {
         return null;
     }
 
+    /**
+     * Returns if a node will be inserted in our buckets.
+     * @param node the node to check
+     * @return true if the node will be inserted in our buckets, false otherwise
+     */
     public boolean isInsertable(Node node) {
         if (this.contains(node) == null) {
-            ClientList closestToNode = this.getClosestTo(node, 1);
-            ClientList closestToBaseNode = new ClientList(ClientList.CLIENT_LIST_SIZE, this.baseNode);
-            closestToBaseNode.add(node);
-            closestToBaseNode.add(closestToNode.getNode(0));
-            return closestToBaseNode.getNode(0).equals(node); // If <node> is at first position in the client list, it is closer to the base node
+            ClientList nodes = new ClientList(0, this.baseNode);
+            for (KBucket bucket: this.buckets) {
+                for (Node temp : bucket.getBucket()) {
+                    nodes.add(temp);
+                }
+            }
+            return !nodes.existsHigher(node);
         }
         return false;
     }
