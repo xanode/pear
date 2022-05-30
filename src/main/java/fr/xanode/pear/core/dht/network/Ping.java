@@ -89,6 +89,7 @@ public class Ping implements Callable<Integer> {
     public Integer call() {
         log.info("Informed that the response has been received via a callback. Setting received date.");
         this.setReceivedDate(new Date());
+        this.sendingNode.setLastCheck(new Date());
         return 0;
     }
 }
