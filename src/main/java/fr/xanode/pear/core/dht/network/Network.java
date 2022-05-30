@@ -1,16 +1,17 @@
 package fr.xanode.pear.core.dht.network;
 
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
+import fr.xanode.pear.core.dht.DHT;
+import fr.xanode.pear.core.dht.async.AsynchronousService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import fr.xanode.pear.core.dht.async.AsynchronousService;
-import fr.xanode.pear.core.dht.DHT;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +43,7 @@ public class Network {
     @NonNull public final DHT dht;
     protected DatagramSocket pingSocket;
     private boolean running;
-    private final ConcurrentHashMap <byte[], Callable<?>> trackingSentPacket = new ConcurrentHashMap<>(); // byte[] is the packet identifier
+    private final ConcurrentHashMap <ByteBuffer, Callable<?>> trackingSentPacket = new ConcurrentHashMap<>(); // byte[] is the packet identifier
 
 
     /**
@@ -68,8 +69,7 @@ public class Network {
                                 0,
                                 receivedPacket.getLength()
                         ),
-                        receivedPacket.getAddress(),
-                        this.trackingSentPacket
+                        receivedPacket.getAddress()
                 ));
             } catch (IOException e) {
                 log.warn(e.getMessage());
@@ -99,23 +99,32 @@ public class Network {
      * @param callback The method to call when receiving the response
      */
     public void sendPacket(Packet packet, Node receiver, Callable<?> callback) throws SodiumLibraryException {
-        // Check packet
-        if (packet.getSenderPublicKey() != receiver.getNodeKey()) {
-            throw new IllegalArgumentException("Receiver node public key and packet public key mismatch");
-        }
         // Send packet
         try {
             byte[] data = packet.toByteArray(this.dht);
             this.pingSocket.send(new DatagramPacket(data, data.length, receiver.getNodeAddress(), receiver.getPort()));
             // Register it to handle response
             if (callback == null) {
-                this.trackingSentPacket.remove(packet.getIdentifier());
+                log.info("Removing callback (:eyes:)...");
+                //this.trackingSentPacket.remove(packet.getIdentifier()); // Comment to allow sending ping to itself
+                log.info("Callback removed (nope).");
             } else {
-                this.trackingSentPacket.put(packet.getIdentifier(), callback);
+                log.info("Registering callback...");
+                this.trackingSentPacket.put(ByteBuffer.wrap(packet.getIdentifier()), callback);
+                log.info("Callback registered.");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get the callback associated with a packet identifier.
+     * @param identifier The packet identifier
+     * @return The callback associated with the packet identifier provided if it exists, null otherwise
+     */
+    Callable<?> getCallback(byte[] identifier) {
+        return this.trackingSentPacket.get(ByteBuffer.wrap(identifier));
     }
 
 }

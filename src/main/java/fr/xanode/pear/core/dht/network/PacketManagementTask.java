@@ -9,7 +9,6 @@ import fr.xanode.pear.core.dht.async.AsyncTask;
 
 import java.net.InetAddress;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +17,6 @@ public class PacketManagementTask implements AsyncTask<Callable<?>> {
     @NonNull private final DHT dht;
     @NonNull private final byte[] data;
     @NonNull private final InetAddress nodeInetAddress;
-    @NonNull private final ConcurrentHashMap<byte[], Callable<?>> trackingSentPackets;
 
     @Override
     public void onPreCall() {
@@ -29,11 +27,13 @@ public class PacketManagementTask implements AsyncTask<Callable<?>> {
     public void onPostCall(Callable<?> result) {
         if (result != null) {
             try {
+                log.info("Calling callback...");
                 result.call();
+                log.info("Callback done.");
             } catch (Exception e) {
                 log.error("Callback failed!", e);
             }
-        }
+        } else log.info("No callback.");
     }
 
     @Override
@@ -60,11 +60,12 @@ public class PacketManagementTask implements AsyncTask<Callable<?>> {
                             Packet response = new Packet(
                                     PacketType.RESPONSE,
                                     RPCService.PING,
-                                    packet.getSenderPublicKey(),
+                                    this.dht.getPublicKey(),
                                     packet.getIdentifier(),
                                     new byte[0]
                             );
                             this.dht.getNetwork().sendPacket(response, node, null);
+                            log.info("Response sent.");
                         } else {
                             if (this.dht.isInsertable(node)) { // If the requesting node is closer than at least one of the nodes in the buckets
                                 // Add node
@@ -73,17 +74,18 @@ public class PacketManagementTask implements AsyncTask<Callable<?>> {
                                 Packet response = new Packet(
                                         PacketType.RESPONSE,
                                         RPCService.PING,
-                                        packet.getSenderPublicKey(),
+                                        this.dht.getPublicKey(),
                                         packet.getIdentifier(),
                                         new byte[0]
                                 );
                                 this.dht.getNetwork().sendPacket(response, node, null);
+                                log.info("Response sent.");
                             }
                         }
                     }
                     case RESPONSE -> {
                         log.info("Managing a response from " + SodiumUtils.binary2Hex(packet.getSenderPublicKey()));
-                        return this.trackingSentPackets.get(packet.getIdentifier());
+                        return this.dht.getNetwork().getCallback(packet.getIdentifier());
                     }
                 }
             }
