@@ -2,6 +2,7 @@ package fr.xanode.pear.core.dht;
 
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.muquit.libsodiumjna.SodiumKeyPair;
@@ -29,6 +30,7 @@ public class DHT {
     @Getter private final Network network;
     private final CheckBucketsAgent checkBucketsAgent;
     private final ArrayList<Thread> servicingThread = new ArrayList<>();
+    private boolean running;
 
     public DHT() throws SodiumLibraryException {
         // Load libsodium library
@@ -51,7 +53,11 @@ public class DHT {
         this.publicKey = keyPair.getPublicKey();
         this.privateKey = keyPair.getPrivateKey();
         log.info("Key pair generated.");
-        log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey));
+        try {
+            log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey) + "(" + InetAddress.getLocalHost().getHostAddress() + ")");
+        } catch (UnknownHostException e) {
+            log.info("Public key: " + SodiumUtils.binary2Hex(this.publicKey) + " (" + e.getMessage() + ")");
+        }
 
         // Initialize buckets
         log.info("Initialize buckets...");
@@ -143,28 +149,30 @@ public class DHT {
      * @throws SocketException if network doesn't work
      */
     public void start() throws SocketException {
-        Thread agentThread = new Thread(this.checkBucketsAgent);
-        this.servicingThread.add(agentThread);
-        agentThread.start();
-        this.network.handle();
+        if (!this.running) {
+            this.running = true;
+            Thread agentThread = new Thread(this.checkBucketsAgent);
+            agentThread.setName("checkBucketsAgent");
+            this.servicingThread.add(agentThread);
+            agentThread.start();
+            this.network.handle();
+        }
     }
 
     /**
      * Close the Distributed Hash Table.
      */
     public void close() {
-        this.checkBucketsAgent.close();
-        this.network.close();
-        try {
+        if (this.running) {
+            this.running = false;
+            this.network.close();
             for (Thread thread : this.servicingThread) {
                 if (thread.isAlive()) {
-                    log.info("Waiting on " + thread.getName() + " to close...");
-                    thread.join();
+                    log.info("Interrupting " + thread.getName() + "...");
+                    thread.interrupt();
                     log.info("Closed.");
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

@@ -46,7 +46,8 @@ public class CheckBucketsAgent implements Runnable {
                                 try {
                                     this.wait(CHECK_ATTEMPT_INTERVAL);
                                 } catch (InterruptedException e) {
-                                    log.warn("Interrupted while waiting during check attempt: " + e.getMessage());
+                                    log.warn("Interrupted while waiting during check attempt (" + e.getMessage() + "), stopped");
+                                    break;
                                 }
                             }
                             counter++;
@@ -66,7 +67,8 @@ public class CheckBucketsAgent implements Runnable {
                         log.info("Waiting for " + CHECK_NODE_INTERVAL + "ms before new check");
                         this.wait(CHECK_NODE_INTERVAL);
                     } catch (InterruptedException e) {
-                        log.warn("Interrupted while waiting before new check: " + e.getMessage());
+                        log.warn("Interrupted while waiting before new check (" + e.getMessage() + "), stopped");
+                        break;
                     }
                 }
         }
