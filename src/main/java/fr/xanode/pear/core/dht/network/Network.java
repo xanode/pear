@@ -105,9 +105,7 @@ public class Network {
             this.pingSocket.send(new DatagramPacket(data, data.length, receiver.getNodeAddress(), receiver.getPort()));
             // Register it to handle response
             if (callback == null) {
-                log.info("Removing callback (:eyes:)...");
                 //this.trackingSentPacket.remove(packet.getIdentifier()); // Comment to allow sending ping to itself
-                log.info("Callback removed (nope).");
             } else {
                 log.info("Registering callback...");
                 this.trackingSentPacket.put(ByteBuffer.wrap(packet.getIdentifier()), callback);
