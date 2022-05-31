@@ -5,6 +5,7 @@ import fr.xanode.pear.core.dht.network.Node;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.BitSet;
+import java.util.Date;
 
 @Slf4j
 public class Buckets {
@@ -42,8 +43,7 @@ public class Buckets {
      * @param node The node that may be added to the KBucket.
      */
     public void update(Node node) {
-        int index = this.bucketIndex(node);
-        this.buckets[index].update(node);
+        this.buckets[this.bucketIndex(node)].update(node);
     }
 
     /**
@@ -119,6 +119,19 @@ public class Buckets {
      */
     public KBucket getBucket(int i) {
         return this.buckets[i];
+    }
+
+    /**
+     * Set the last check date of a node.
+     * @param node The node to set th date
+     * @param date The date to set
+     */
+    public void putLastCheck(Node node, Date date) {
+        this.buckets[this.bucketIndex(node)].putLastCheck(node, date);
+    }
+
+    public Date getLastCheck(Node node) {
+        return this.buckets[this.bucketIndex(node)].getLastCheck(node);
     }
 
 }

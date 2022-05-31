@@ -125,7 +125,7 @@ public class Packet {
                 .array();
         log.info("Encrypting payload...");
         byte[] nonce = dht.generateNonce();
-        byte[] encryptedPayload = dht.encrypt(this.senderPublicKey, nonce, packetPayload);
+        byte[] encryptedPayload = dht.encrypt(receiverPublicKey, nonce, packetPayload);
         log.info("Payload encrypted.");
 
         log.info("Packet " + SodiumUtils.binary2Hex(this.identifier) + " transformed into a byte array (just before return).");

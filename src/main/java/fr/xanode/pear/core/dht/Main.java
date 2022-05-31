@@ -26,6 +26,7 @@ public class Main {
                         bootstrapNodeInetAddress,
                         Network.DHT_PORT
                 );
+                dht.addNode(node);
                 new Thread(node::isAlive).start();
             }
             dht.start();

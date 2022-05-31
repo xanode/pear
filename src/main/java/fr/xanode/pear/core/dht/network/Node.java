@@ -3,7 +3,6 @@ package fr.xanode.pear.core.dht.network;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import fr.xanode.pear.core.dht.DHT;
 
@@ -19,7 +18,6 @@ public class Node {
     private final byte[] nodeKey;
     private final InetAddress nodeAddress;
     private final int port;
-    @Setter private Date lastCheck;
 
     public Node(final DHT dht, final byte[] nodeKey, final InetAddress nodeAddress, final int port) {
         if (nodeAddress.isMulticastAddress()) {
@@ -79,7 +77,7 @@ public class Node {
             } catch (SodiumLibraryException e) {
                 e.printStackTrace(); // Should never happen
             }
-            log.info("This node is alive! (last check: " + this.lastCheck + ")");
+            log.info("This node is alive! (last check: " + this.dht.getBuckets().getLastCheck(this) + ")");
             return true;
         }
         return false;

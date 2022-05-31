@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Getter @RequiredArgsConstructor
@@ -14,6 +16,7 @@ public class KBucket {
 
     @NonNull private final int k; // Original paper advise 20
     private final ArrayList<Node> nodes = new ArrayList<>();
+    private final ConcurrentHashMap<Node, Date> lastChecks = new ConcurrentHashMap<>();
 
     /**
      * Update this KBucket with a new node.
@@ -39,7 +42,7 @@ public class KBucket {
                 // If the bucket is full
                 log.info("The node isn't in the bucket but the bucket is full.");
                 log.info("Testing if the node is alive...");
-                if (!this.nodes.get(this.k-1).isAlive()) {
+                if (!this.nodes.get(this.k - 1).isAlive()) {
                     // Replace last node if it isn't alive anymore
                     log.info("The node seems alive, adding it.");
                     this.nodes.set(this.k-1, node);
@@ -78,5 +81,27 @@ public class KBucket {
             }
         }
         return null;
+    }
+
+    /**
+     * Get node of indice i.
+     * @param i The indice of the node
+     * @return The wanted node
+     */
+    public Node getNode(int i) {
+        return this.nodes.get(i);
+    }
+
+    /**
+     * Set the last check date of a node.
+     * @param node The node to set th date
+     * @param date The date to set
+     */
+    public void putLastCheck(Node node, Date date) {
+        this.lastChecks.put(node, date);
+    }
+
+    public Date getLastCheck(Node node) {
+        return this.lastChecks.get(node);
     }
 }
