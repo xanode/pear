@@ -1,4 +1,4 @@
-package toxcore.dht;
+package fr.xanode.pear.core.dht;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,13 +15,14 @@ class DHTTest {
     @DisplayName("Instanciating a DHT")
     void testDHT() throws SodiumLibraryException {
         DHT dht = new DHT();
+        assertEquals(dht.getNetwork().dht, dht);
     }
 
     @Test
     @DisplayName("Test that the public key is the right size.") // Stupid test, but it's a start.
     void testPublicKeySize() throws SodiumLibraryException {
         DHT dht = new DHT();
-        assertEquals(dht.getPublicKey().length, DHT.CRYPTO_PUBLIC_KEY_SIZE);
+        assertEquals(dht.getPublicKey().length, DHT.CRYPTO_KEY_SIZE);
     }
 
     @Test
@@ -43,5 +44,6 @@ class DHTTest {
         byte[] decrypted = receiver.decrypt(sender.getPublicKey(), nonce, ciphertext);
         assertEquals(new String(plaintext), new String(decrypted));
     }
+
 
 }

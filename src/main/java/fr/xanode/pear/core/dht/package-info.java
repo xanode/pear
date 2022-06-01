@@ -2,4 +2,4 @@
  * Implement the Distributed Hash Table.
  *
  */
-package toxcore.dht;
+package fr.xanode.pear.core.dht;
