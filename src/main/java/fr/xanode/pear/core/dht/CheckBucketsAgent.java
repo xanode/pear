@@ -13,7 +13,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class CheckBucketsAgent implements Runnable {
 
-    public static final long CHECK_NODE_INTERVAL = 10000; // ms
+    public static final long CHECK_NODE_INTERVAL = 25000; // ms
     public static final int CHECK_ATTEMPTS = 3;
     public static final long CHECK_ATTEMPT_INTERVAL = 1000; // ms
 

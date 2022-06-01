@@ -55,9 +55,9 @@ public class AsynchronousService {
      * Stops the pool of workers. This is blocking call to wait for all tasks to be completed.
      */
     public void close() {
-        service.shutdown();
+        this.service.shutdown();
         try {
-            service.awaitTermination(10, TimeUnit.SECONDS);
+            this.service.awaitTermination(10, TimeUnit.SECONDS);
         } catch(InterruptedException e) {
             log.error("Error waiting for executor service shutdown!");
         }

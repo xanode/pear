@@ -101,7 +101,6 @@ public class DHT {
      * @throws SodiumLibraryException in case of error
      */
     public byte[] encrypt(byte[] receiverPublicKey, byte[] nonce, byte[] data) throws SodiumLibraryException {
-        // Encrypt data and return it
         return SodiumLibrary.cryptoBoxEasy(data, nonce, receiverPublicKey, this.privateKey);
     }
 
@@ -114,7 +113,6 @@ public class DHT {
      * @throws SodiumLibraryException in case of error
      */
     public byte[] decrypt(byte[] senderPublicKey, byte[] nonce, byte[] data) throws SodiumLibraryException {
-        // Decrypt data and return it
         return SodiumLibrary.cryptoBoxOpenEasy(data, nonce, senderPublicKey, this.privateKey);
     }
 

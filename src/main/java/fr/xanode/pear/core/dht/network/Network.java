@@ -43,7 +43,7 @@ public class Network {
     @NonNull public final DHT dht;
     protected DatagramSocket pingSocket;
     private boolean running;
-    private final ConcurrentHashMap <ByteBuffer, Callable<?>> trackingSentPacket = new ConcurrentHashMap<>(); // byte[] is the packet identifier
+    private final ConcurrentHashMap <ByteBuffer, Callable<?>> trackingSentPacket = new ConcurrentHashMap<>(); // ByteBuffer is (wrap) the packet identifier
 
 
     /**
@@ -105,7 +105,7 @@ public class Network {
             this.pingSocket.send(new DatagramPacket(data, data.length, receiver.getNodeAddress(), receiver.getPort()));
             // Register it to handle response
             if (callback == null) {
-                //this.trackingSentPacket.remove(packet.getIdentifier()); // Comment to allow sending ping to itself
+                this.trackingSentPacket.remove(ByteBuffer.wrap(packet.getIdentifier()));
             } else {
                 log.info("Registering callback...");
                 this.trackingSentPacket.put(ByteBuffer.wrap(packet.getIdentifier()), callback);

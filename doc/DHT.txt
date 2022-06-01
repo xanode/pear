@@ -22,7 +22,7 @@ DHT Packet:
 | Encrypted Payload:                |
 |   [Encrypted with the nonce,      |
 |   Private DHT key of the SENDER,  |
-|   Public DHT key of the RECIVER]  |
+|   Public DHT key of the RECEIVER] |
 | data/payload             (varies) |
 +-----------------------------------+
 
